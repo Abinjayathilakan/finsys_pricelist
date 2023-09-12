@@ -31048,8 +31048,9 @@ def add_mjournal(request):
         acc = accounts1.objects.filter(cid=cmp1)
         cust = customer.objects.filter(cid=cmp1)
         vndr = vendor.objects.filter(cid=cmp1)
+        employee = payrollemployee.objects.filter(cid_id=cmp1)
         
-        context = {'acc':acc,'cmp1':cmp1,'cust':cust,'vndr':vndr}
+        context = {'acc':acc,'cmp1':cmp1,'cust':cust,'vndr':vndr,'employee':employee}
         return render(request,'app1/add_mjournal.html',context)   
         
 

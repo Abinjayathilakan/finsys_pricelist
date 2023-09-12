@@ -115,7 +115,6 @@
                                                                 {% endfor %}
                                                             </select>
                                                         </td>
-                                                        
                                                         <td><input type="text" name='jdesc[]' id="jdesc1"
                                                                    placeholder='Enter Description' class="form-control" >
                                                         </td>
@@ -126,9 +125,6 @@
                                                                     <option   value="{{ a.firstname }} {{ a.lastname }}">{{ a.firstname }} {{ a.lastname }} </option>
                                                                 {% endfor %}
                                                                 {% for a in vndr %}
-                                                                    <option   value="{{ a.firstname }} {{ a.lastname }}">{{ a.firstname }} {{ a.lastname }} </option>
-                                                                {% endfor %}
-                                                                {% for a in employee %}
                                                                     <option   value="{{ a.firstname }} {{ a.lastname }}">{{ a.firstname }} {{ a.lastname }} </option>
                                                                 {% endfor %}
                                                             </select>
