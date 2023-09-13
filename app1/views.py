@@ -31048,9 +31048,8 @@ def add_mjournal(request):
         acc = accounts1.objects.filter(cid=cmp1)
         cust = customer.objects.filter(cid=cmp1)
         vndr = vendor.objects.filter(cid=cmp1)
-        employee = payrollemployee.objects.filter(cid_id=cmp1)
         
-        context = {'acc':acc,'cmp1':cmp1,'cust':cust,'vndr':vndr,'employee':employee}
+        context = {'acc':acc,'cmp1':cmp1,'cust':cust,'vndr':vndr}
         return render(request,'app1/add_mjournal.html',context)   
         
 
@@ -39381,6 +39380,14 @@ def pricelist(request):
             
     except:
         return redirect('pricelist')
+
+
+# def pricelist(request):
+#     cmp1 = company.objects.get(id=request.session["uid"])  # Retrieve the company object
+#     pricelists = Pricelist.objects.filter(company=cmp1)  # Filter pricelists by the company object
+#     print(pricelists)
+#     return render(request, 'app1/pricelist.html', {'pricelists': pricelists, 'cmp1': cmp1})
+
     
 
 @login_required(login_url='regcomp')
@@ -41890,6 +41897,7 @@ def employeeloanpage(request):
     print(employee)
     return render(request,'app1/employeeloanpage.html',{'employee':employee,'cmp1':cmp1})
 
+
 def activeloanpage(request):
     cmp1 = company.objects.get(id=request.session["uid"])
     employee=EmployeeLoan.objects.filter(company=request.session["uid"],status='active')
@@ -42395,3 +42403,30 @@ def deleteloan(request,eid):
     employee = EmployeeLoan.objects.get(id=eid,company=request.session["uid"])
     employee.delete()
     return redirect('employeeloanpage')  
+
+# Abin - Price List , Manual Journal Corrections
+
+
+# def createaccount3(request):
+#     if 'uid' in request.session:
+#         if request.session.has_key('uid'):
+#             uid = request.session['uid']
+#         else:
+#             return redirect('/')
+#         cmp1 = company.objects.get(id=request.session['uid'])
+#         if request.method=='POST':
+#             acctype = request.POST['acctype']
+#             name = request.POST['name']
+#             des = request.POST['description']                           
+#             balance = request.POST.get('balance')
+#             if balance == "":
+#                 balance=0.0
+#             asof = request.POST['asof']
+#             dbbalance = request.POST['dbbalance']
+#             if dbbalance == "":
+#                 dbbalance = 0.0
+#             account = accounts1(acctype=acctype, name=name, description=des, balance=balance, asof=asof, cid=cmp1,dbbalance=dbbalance)
+#             account.save()
+#             return redirect('add_mjournal')
+#         return render(request,'app1/add_mjournal.html',{'cmp1':cmp1})
+#     return redirect('/')

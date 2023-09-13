@@ -245,22 +245,22 @@
                         <div>
                             <center>
 
-                                <a href="{% url 'pricelist_editpage' pl.id %}"
+                                <a href="{% url 'editloan' employee.id %}"
                                     class=" fa fa-pencil btn btn-outline-info rounded-pill text-grey mt-3 mb-3"
                                     role="button">
                                     Edit
                                 </a>&nbsp;&nbsp;&nbsp;
                                 {% if employee.status == "Active" %}
-                                <a href="{% url 'inactive_pricelist' pl.id %}"
+                                <a href="{% url 'inactive_loan' employee.id  %}"
                                     class="fa fa-check btn btn-outline-info rounded-pill text-grey mt-3 mb-3"
                                     role="button">Activate</a> &nbsp;&nbsp;&nbsp;
                                 {% else %}
-                                <a href="{% url 'active_pricelist' pl.id %}"
+                                <a href="{% url 'active_loan' employee.id  %}"
                                     class=" fa fa-exclamation-triangle  btn btn-outline-info rounded-pill text-grey mt-3 mb-3"
                                     role="button">Inactivate</a> &nbsp;&nbsp;&nbsp;
                                 {% endif %}
 
-                                <a href="{% url 'delete_pricelist' pl.id %}"
+                                <a href="{% url 'deleteloan' employee.id %}"
                                     class=" fa fa-trash btn btn-outline-info rounded-pill text-grey mt-3 mb-3"
                                     role="button"> Delete</a>
 
@@ -296,7 +296,8 @@
                             <div class="p-5">
 
                                 <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <h1 class="fw-bold mb-0 text-black">{{pl.name}}</h1>
+                                    <h1 class="fw-bold mb-0 text-black">{{ employee.employee.title }}.
+                                        {{employee.employee.firstname }} {{ employee.employee.lastname }}</h1>
                                     <img src="{{ employee.employee.image.url }}"
                                         style="width: 15%; height: 97px; border-radius: 50px">
                                 </div>
@@ -331,11 +332,11 @@
                                     <div class="row">
                                         <div class="col-md-4 ml-5 mr-5 mt-3">
                                             <label for="title ">
-                                                <h6><b>Type </b></h6>
+                                                <h6><b>Loan Amount </b></h6>
                                             </label>
                                         </div>
                                         <div class="col-md-4 ml-5 mt-3">
-                                            <label for="title"><b>: {{pl.types}}</b></label>
+                                            <label for="title"><b>: {{ employee.LoanAmount }}</b></label>
 
                                         </div>
                                     </div>
@@ -343,11 +344,11 @@
                                     <div class="row">
                                         <div class="col-md-4 ml-5  mr-5 mt-3">
                                             <label for="title">
-                                                <h6><b>Item Rate </b></h6>
+                                                <h6><b>Loan Date </b></h6>
                                             </label>
                                         </div>
                                         <div class="col-md-4 ml-5 mt-3">
-                                            <label for="title"><b>: {{pl.item_rate}}</b></label>
+                                            <label for="title"><b>: {{ employee.LoanDate }}</b></label>
 
                                         </div>
                                     </div>
@@ -355,73 +356,17 @@
                                     <div class="row">
                                         <div class="col-md-4 ml-5 mr-5 mt-3">
                                             <label for="title">
-                                                <h6><b>Description </b> </h6>
+                                                <h6><b>Expery Date</b> </h6>
                                             </label>
                                         </div>
                                         <div class="col-md-4 ml-5 mt-3">
-                                            <label for="title"><b>: {{pl.description}}</b></label>
+                                            <label for="title"><b>: {{ employee.ExperyDate }}</b></label>
 
                                         </div>
                                     </div>
                                     <hr>
 
-                                    {% if items %}
-                            <hr>
-                            <div class="row mb-3">
-                                <label class="col-sm-12 mb-5 text-center" style="font-size: large;"><b>Customized item rates</b></label>
-                                <div class="col-sm-2"></div>
-                                <div class="table-responsive col-sm-8">
-                                    <table class="table  table-striped" style="background-color: #2f516f;color: white;font-size: large;">
-                                        <thead>
-                                            <tr>
-                                                <th>Item Details</th>
-                                                <th>Standard Rate(INR)</th>
-                                                <th>Custom Rate(INR)</th>
-                                            </tr>
-                                        </thead>
-                                        {% for i in items %}
-                                        <tbody>
-                                            <tr>
-                                                <td>{{i.itemname}}</td>
-                                                <td>{{i.itemrate}}</td>
-                                                <td><b>{{i.customrate}}</b></td>
-
-                                            </tr>
-                                        </tbody>
-                                        {% endfor %}
-                                    </table>
-
-                                </div>
-                                <div class="col-sm-2"></div>
-                            </div>
-                            {% else %}
-                            <div class="row mb-3">
-                                <label class="col-sm-2" style="font-size: large;">Percentage</label>
-                                <p ><b>:</b></p>
-                                <div class="col-sm-5">
-                                  <p style="font-size: large;"><b>{{pl.percentage}}%  {{pl.upordown}}</b></p>
-                                </div>
-                            </div>
-                        
-                            <div class="row mb-3">
-                                <label class="col-sm-2" style="font-size: large;">Round off to</label>
-                                <p ><b>:</b></p>
-                                <div class="col-sm-5">
-                                  <p style="font-size: large;"><b>{{pl.roundoffto}}</b></p>
-                                </div>
-                            </div>
-                            
-                            <div class="row mb-3">
-                                <label class="col-sm-2" style="font-size: large;">Currency</label>
-                                <p ><b>:</b></p>
-                                <div class="col-sm-5">
-                                  <p style="font-size: large;"><b>{{pl.currency}}</b></p>
-                                </div>
-                            </div>
-                            {% endif %}
-                            
-
-                                    <!-- {% if employee.action == 1 %}
+                                    {% if employee.action == 1 %}
                                     <div class="row">
                                         <div class="col-md-4 ml-5 mr-5 mt-3">
                                             <label for="title">
@@ -536,17 +481,7 @@
                                     {{ employee.employee.amount }}
                                 </div>
 
-                                {% endif %} -->
-
-
-
-
-
-
-
-
-
-                                
+                                {% endif %}
 
 
                                 <!-- <h3 class="fw-bold mb-2 mt-2 pt-1"> Bank Account Details</h3>

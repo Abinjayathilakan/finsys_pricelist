@@ -162,7 +162,12 @@
                                     Draft
                                     {% endif %}
                                 </td>
-                                <td>{{ a.notes }}</td>
+                                <!-- <td>{{ a.notes }}</td> -->
+                                <td>
+                                    <div class="description-tooltip" data-toggle="tooltip" data-placement="top" title="{{  a.notes }}">
+                                        <i class="fas fa-sticky-note">*</i>
+                                    </div>
+                                </td>
                                 <td>{{ a.total_deb }}</td>
                                 <!-- <td>{{ a.attach }}</td> -->
                                 
