@@ -294,12 +294,14 @@
                     </div>
                     <div class="modal-body">
                         <div class="card p-3 m-3">
-                            <form method="post" action="{% url 'createaccount2' %}">
+                            <!-- <form method="post" action="" id="modalVendor"> -->
+                                <form method="post" action="" id="modalVendor" onsubmit="return false;">
+
                                 {% csrf_token %}
                                 <div class="row mt-2 mb-2">
                                     <div class="col-md-6">
                                         <label for="acctyp">Account Type</label>
-                                        <select name="acctype" id="select1" class="custom-select-md form-control w-100">
+                                        <select name="acctype" id="acctype" class="custom-select-md form-control w-100">
                                             <!-- <option >Account Receivable</option>
                                             <option>Current Assets</option>
                                             <option>Bank</option>
@@ -335,7 +337,7 @@
                                     </div>
                                     <div class="col-md-6 mt-2">
                                         <label for="balance">Debit</label>
-                                        <input type="number" name="dbbalance" id="balance" placeholder="Debit Amount"
+                                        <input type="number" name="dbbalance" id="dbbalance" placeholder="Debit Amount"
                                                class="form-control">
                                     </div>
                                 </div>
@@ -348,12 +350,12 @@
                                         <div class="mt-2">
                                             <div>
                                                 <label for="asof">As of</label>
-                                                <input type="date" name="asof" id="date1" class="form-control" value="{{ tod }}">
+                                                <input type="date" name="asof" id="asof" class="form-control" value="{{ tod }}">
                                             </div>
                                         </div>
                                         <div class="mt-2">
                                             <label>Description</label>
-                                        <textarea class="form-control" name="description" placeholder="Max. 500 Characters"></textarea>
+                                        <textarea class="form-control" name="description" id="description" placeholder="Max. 500 Characters"></textarea>
                                         </div>
                                     </div>
                                 </div>        
@@ -362,7 +364,7 @@
                                         <div class="col-md-5"></div>
                                         <div class="col-md-4"></div>
                                         <div class="col-md-3">
-                                            <button type="submit" class="btn btn-outline-info">Save and
+                                            <button type="submit" id="accountSave" class="btn btn-outline-info">Save and
                                                 close
                                             </button>
                                         </div>
@@ -476,6 +478,116 @@
                 
             }); 
         </script>
+
+        <script>
+            $(document).on("click", "#accountSave", function () {
+                $.ajax({
+                    type: 'POST',
+                    url: "{% url 'createaccount3' %}",
+                    data: $("#modalVendor").serialize(),  // Serialize the form data
+                    success: function (response) {
+                        document.getElementById("modalVendor").reset();
+                        reloadVendor();
+                    },
+                });
+            });
+            
+            function reloadVendor() {
+                $.ajax({
+                    url: "{% url 'vendor_credit_dropdown' %}",
+                    type: "GET",
+                    dataType: "json",
+                    data: {
+                        csrfmiddlewaretoken: '{{ csrf_token }}',
+                    },
+                    success: function (data) {
+                        var dropdown = $('#account');
+                        dropdown.empty();
+                        $.each(data, function (key, value) {
+                            dropdown.append($('<option></option>').attr('value', key).text(value[0] + " " + value[1] + ' ' + value[2]).val(value[1] + ' ' + value[2] + ' ' + value[3]));
+                        });
+                    },
+                    error: function (xhr, status, error) {
+                        console.error(xhr.responseText);
+                    }
+                });
+            }
+            </script>
+            
+        <!-- <script>
+            $(document).on("click","#vendorSave",function(){
+                $.ajax({
+                  
+                  type : 'POST',
+                  url:"{% url 'vendor_credit_vendor' %}",
+              
+                  data:{
+                      title : $("#title").val(),
+                      firstname : $("#fname").val(),
+                      lastname : $("#lname").val(),
+                      company_name : $("#vcompany").val(),
+                      display_name : $('#vdisplayname').text(),
+                      email : $("#vemail").val(),
+                      website :$("#wsite").val(),
+                      work_mobile :$("#vw_mobile").val(),
+                      pers_mobile :$("#vp_mobile").val(),
+                      skype :$("#vskype").val(),
+                      desg :$("#v_desg").val(),
+                      dpt :$("#v_dpt").val(),
+                      gsttype :$("#v_gsttype").val(),
+                      gstin :$("#v_gstin").val(),
+                      panno : $("#v_pan").val(),
+                      sourceofsupply :$("#v_srcsupply").val(),
+                      currency : $("#v_curn").val(),
+                      openingbalance : $("#v_open").val(),
+                      paymentterms : $("#v_terms").val(),
+                      street : $("#vstreet").val(),
+                      city : $("#vcity").val(),
+                      state : $("#vstate").val(),
+                      pincode : $("#vpincode").val(),
+                      fax : $("#vfax").val(),
+                      phone : $("#vphone").val(),
+                      country : $("#vcountry").val(),
+                      shipstreet : $("#vsstreet").val(),
+                      shipcity : $("#vscity").val(),
+                      shipstate : $("#vsstate").val(),
+                      shippincode : $("#vspincode").val(),
+                      shipcountry : $("#vscountry").val(),
+                      shipfax : $("#vsfax").val(),
+                      shipphone : $("#vsphone").val(),
+                      csrfmiddlewaretoken: '{{ csrf_token }}'
+                      
+                    },
+                  
+                    success: function(response) {
+                      document.getElementById("modalVendor").reset();
+                      reloadVendor();
+                    },
+                });        
+              });
+              
+              function reloadVendor() {
+                $.ajax({
+                  url: "{% url 'vendor_credit_dropdown' %}",
+                  type: "GET",
+                  dataType: "json",
+                  data: $(this).serialize(),
+                  csrfmiddlewaretoken: '{{ csrf_token }}',
+              
+                  success: function(data) {
+                    var dropdown = $('#vendor');
+                    dropdown.empty();
+                    $.each(data, function(key, value) {
+                        dropdown.append($('<option></option>').attr('value', key).text(value[0]+" " +value[1] + ' ' + value[2]).val(value[1] + ' ' + value[2]+ ' ' +value[3]));
+                    });
+                  },
+                  error: function(xhr, status, error) {
+                  console.error(xhr.responseText);
+                  }
+                });
+              }
+        </script> -->
+        
         <!-- <script>
             $('#form').submit(function() {
                 var match = $('#subtotal').text() == $('#sub_total').text();

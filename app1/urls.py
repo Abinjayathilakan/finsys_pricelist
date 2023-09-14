@@ -1085,7 +1085,15 @@ urlpatterns = [
     path('removerecinv',views.removerecinv,name='removerecinv'),
     path('gorecinvoices3',views.gorecinvoices3,name='gorecinvoices3'),
 
+ # Abin - Price List , Manual Journal Corrections
  
+    re_path(r'^createaccount3$', views.createaccount3, name='createaccount3'),
+    path('add_comment_retinvoice2/<int:id>',views.add_comment_retinvoice2,name='add_comment_retinvoice2'),
+    path('vendor_credit_dropdown',views.vendor_credit_dropdown,name='vendor_credit_dropdown'),
+
+    # path('pricelistpage', views.pricelistpage, name='pricelistpage'),
+    # path('sort_pricelist_name', views.sort_pricelist_name, name='sort_pricelist_name'),
+    # path('sort_pricelist_type', views.sort_pricelist_type, name='sort_pricelist_type'),
      
      
 ]

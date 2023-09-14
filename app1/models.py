@@ -1792,6 +1792,7 @@ class Pricelist(models.Model):
     currency=models.CharField(max_length=255,default='Indian Rupee')
     upordown=models.CharField(max_length=100,default='None')
     percentage=models.CharField(max_length=100,null=True,blank=True)
+    comments = models.CharField(max_length=100,null=True)
     roundoffto=models.CharField(max_length=100,default='None')
     is_active=models.BooleanField(default=True,null=True,blank=True)
     

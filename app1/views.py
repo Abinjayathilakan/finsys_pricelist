@@ -39380,6 +39380,12 @@ def pricelist(request):
             
     except:
         return redirect('pricelist')
+    
+# def employeeloanpage(request):
+#     cmp1 = company.objects.get(id=request.session["uid"])
+#     employee=Pricelist.objects.filter(company=request.session["uid"])
+#     print(employee)
+#     return render(request,'app1/employeeloanpage.html',{'employee':employee,'cmp1':cmp1})
 
 
 # def pricelist(request):
@@ -42407,26 +42413,74 @@ def deleteloan(request,eid):
 # Abin - Price List , Manual Journal Corrections
 
 
-# def createaccount3(request):
-#     if 'uid' in request.session:
-#         if request.session.has_key('uid'):
-#             uid = request.session['uid']
-#         else:
-#             return redirect('/')
-#         cmp1 = company.objects.get(id=request.session['uid'])
-#         if request.method=='POST':
-#             acctype = request.POST['acctype']
-#             name = request.POST['name']
-#             des = request.POST['description']                           
-#             balance = request.POST.get('balance')
-#             if balance == "":
-#                 balance=0.0
-#             asof = request.POST['asof']
-#             dbbalance = request.POST['dbbalance']
-#             if dbbalance == "":
-#                 dbbalance = 0.0
-#             account = accounts1(acctype=acctype, name=name, description=des, balance=balance, asof=asof, cid=cmp1,dbbalance=dbbalance)
-#             account.save()
-#             return redirect('add_mjournal')
-#         return render(request,'app1/add_mjournal.html',{'cmp1':cmp1})
-#     return redirect('/')
+from django.http import JsonResponse
+
+def createaccount3(request):
+    if 'uid' in request.session:
+        if request.session.has_key('uid'):
+            uid = request.session['uid']
+        else:
+            return JsonResponse({'success': False, 'message': 'Session key missing'})
+
+        cmp1 = company.objects.get(id=request.session['uid'])
+
+        if request.method == 'POST':
+            acctype = request.POST['acctype']
+            name = request.POST['name']
+            des = request.POST['description']
+            balance = request.POST.get('balance', 0.0)
+            asof = request.POST['asof']
+            dbbalance = request.POST.get('dbbalance', 0.0)
+
+            account = accounts1(
+                acctype=acctype,
+                name=name,
+                description=des,
+                balance=balance,
+                asof=asof,
+                cid=cmp1,
+                dbbalance=dbbalance
+            )
+            account.save()
+
+            return JsonResponse({'success': True, 'message': 'Account created successfully'})
+        else:
+            return JsonResponse({'success': False, 'message': 'Invalid request method'})
+    else:
+        return JsonResponse({'success': False, 'message': 'User not authenticated'})
+    
+@login_required(login_url='login')
+def vendor_credit_dropdown(request):
+    user = User.objects.get(id=request.user.id)
+
+    options = {}
+    option_objects = accounts1.objects.filter(user = user)
+    for option in option_objects:
+        
+        options[option.id] = [option.name]
+    return JsonResponse(options)
+
+# def pricelistpage(request):
+#     cmp1 = company.objects.get(id=request.session["uid"])
+#     pricelist=Pricelist.objects.filter(company=request.session["uid"])
+#     print(employee)
+#     return render(request,'app1/pricelist.html',{'pricelist':pricelist,'cmp1':cmp1})
+
+# def sort_pricelist_name(request):
+#     cmp1 = company.objects.get(id=request.session["uid"])
+#     pricelist=Pricelist.objects.filter(company=request.session["uid"]).order_by('employee__firstname', 'employee__lastname')
+   
+#     return render(request,'app1/pricelist.html',{'pricelist':pricelist,'cmp1':cmp1})
+
+# def sort_pricelist_type(request):
+#     cmp1 = company.objects.get(id=request.session["uid"])
+#     pricelist=Pricelist.objects.filter(company=request.session["uid"]).order_by('LoanAmount')
+   
+#     return render(request,'app1/pricelist.html',{'pricelist':pricelist,'cmp1':cmp1}) 
+
+def add_comment_retinvoice2(request,pk):
+    if request.method == 'POST':
+        ret_inv = pricelist.objects.get(id=id) 
+        ret_inv.comments = request.POST['comment']
+        ret_inv.save()
+        return redirect('pricelist_viewpage',id=ret_inv.id)
