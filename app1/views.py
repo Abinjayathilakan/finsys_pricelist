@@ -39370,16 +39370,22 @@ def additem_challan(request):
 
 # ---------------------------------------------------------views for pricelist---------------------
 
-@login_required(login_url='regcomp')
-def pricelist(request):
-    try:
-        cmp1 = company.objects.get(id=request.session['uid'])
-        pricelist=Pricelist.objects.filter(cid=cmp1)
-        context = {'cmp1': cmp1, 'pricelist':pricelist}
-        return render(request,'app1/pricelist.html',context)
+# @login_required(login_url='regcomp')
+# def pricelist(request):
+#     try:
+#         cmp1 = company.objects.get(id=request.session['uid'])
+#         pricelist=Pricelist.objects.filter(cid=cmp1)
+#         context = {'cmp1': cmp1, 'pricelist':pricelist}
+#         return render(request,'app1/pricelist.html',context)
             
-    except:
-        return redirect('pricelist')
+#     except:
+#         return redirect('pricelist')
+
+# def pricelist(request):
+#     cmp1 = company.objects.get(id=request.session["uid"])
+#     pricelist=Pricelist.objects.filter(cid=cmp1)
+#     print(pricelist)
+#     return render(request,'app1/pricelist.html',{'pricelist':pricelist,'cmp1':cmp1})
     
 # def employeeloanpage(request):
 #     cmp1 = company.objects.get(id=request.session["uid"])
@@ -42415,50 +42421,75 @@ def deleteloan(request,eid):
 
 from django.http import JsonResponse
 
+@login_required(login_url='regcomp')
 def createaccount3(request):
     if 'uid' in request.session:
         if request.session.has_key('uid'):
             uid = request.session['uid']
         else:
-            return JsonResponse({'success': False, 'message': 'Session key missing'})
-
+            return redirect('/')
         cmp1 = company.objects.get(id=request.session['uid'])
-
-        if request.method == 'POST':
+        if request.method=='POST':
             acctype = request.POST['acctype']
             name = request.POST['name']
-            des = request.POST['description']
-            balance = request.POST.get('balance', 0.0)
+            des = request.POST['description']                           
+            balance = request.POST.get('balance')
+            if balance == "":
+                balance=0.0
             asof = request.POST['asof']
-            dbbalance = request.POST.get('dbbalance', 0.0)
-
-            account = accounts1(
-                acctype=acctype,
-                name=name,
-                description=des,
-                balance=balance,
-                asof=asof,
-                cid=cmp1,
-                dbbalance=dbbalance
-            )
+            dbbalance = request.POST['dbbalance']
+            if dbbalance == "":
+                dbbalance = 0.0
+            account = accounts1(acctype=acctype, name=name, description=des, balance=balance, asof=asof, cid=cmp1,dbbalance=dbbalance)
             account.save()
+            return redirect('addexpenses')
+        return render(request,'app1/add_mjournal.html',{'cmp1':cmp1})
+    return redirect('/')
 
-            return JsonResponse({'success': True, 'message': 'Account created successfully'})
-        else:
-            return JsonResponse({'success': False, 'message': 'Invalid request method'})
-    else:
-        return JsonResponse({'success': False, 'message': 'User not authenticated'})
+# def createaccount3(request):
+#     if 'uid' in request.session:
+#         if request.session.has_key('uid'):
+#             uid = request.session['uid']
+#         else:
+#             return JsonResponse({'success': False, 'message': 'Session key missing'})
+
+#         cmp1 = company.objects.get(id=request.session['uid'])
+
+#         if request.method == 'POST':
+#             acctype = request.POST['acctype']
+#             name = request.POST['name']
+#             des = request.POST['description']
+#             balance = request.POST.get('balance', 0.0)
+#             asof = request.POST['asof']
+#             dbbalance = request.POST.get('dbbalance', 0.0)
+
+#             account = accounts1(
+#                 acctype=acctype,
+#                 name=name,
+#                 description=des,
+#                 balance=balance,
+#                 asof=asof,
+#                 cid=cmp1,
+#                 dbbalance=dbbalance
+#             )
+#             account.save()
+
+#             return JsonResponse({'success': True, 'message': 'Account created successfully'})
+#         else:
+#             return JsonResponse({'success': False, 'message': 'Invalid request method'})
+#     else:
+#         return JsonResponse({'success': False, 'message': 'User not authenticated'})
     
-@login_required(login_url='login')
-def vendor_credit_dropdown(request):
-    user = User.objects.get(id=request.user.id)
+# @login_required(login_url='login')
+# def vendor_credit_dropdown(request):
+#     user = User.objects.get(id=request.user.id)
 
-    options = {}
-    option_objects = accounts1.objects.filter(user = user)
-    for option in option_objects:
+#     options = {}
+#     option_objects = accounts1.objects.filter(user = user)
+#     for option in option_objects:
         
-        options[option.id] = [option.name]
-    return JsonResponse(options)
+#         options[option.id] = [option.name]
+#     return JsonResponse(options)
 
 # def pricelistpage(request):
 #     cmp1 = company.objects.get(id=request.session["uid"])
@@ -42484,3 +42515,23 @@ def add_comment_retinvoice2(request,pk):
         ret_inv.comments = request.POST['comment']
         ret_inv.save()
         return redirect('pricelist_viewpage',id=ret_inv.id)
+    
+    
+def iordername2(request):
+    try:
+        cmp1 = company.objects.get(id=request.session['uid'])
+        pricelist = pricelist.objects.order_by('name').filter(cid=cmp1)
+        context = {'pricelist':pricelist,'cmp1': cmp1}
+        return render(request, 'app1/pricelist.html',context)      
+    except:
+        return redirect('price_list')
+
+@login_required(login_url='regcomp')
+def pricelist(request):
+    try:
+        cmp1 = company.objects.get(id=request.session['uid'])
+        pricelist = Pricelist.objects.filter(cid=cmp1)
+        context = {'pricelist':pricelist,'cmp1':cmp1}
+        return render(request, 'app1/pricelist.html',context)  
+    except:
+        return redirect('pricelist')

@@ -32,11 +32,11 @@
                                     <a href="{% url 'active_pricelist' pl.id %}" class=" fa fa-check btn btn-outline-info text-grey mt-2 mb-3" role="button"> Active</a>
                                     {% endif %}
                                     
-                                      <a href="#"  class="comment-icon" data-toggle="modal" data-target="#commentModal" 
-                                      data-comment="{{ inv.comments }}" data-inv-id="{{ inv.id }}" class="fas fa-comment btn btn-outline-info text-grey mt-2 mb-3">Comment</a>
+                                    <a href="#"  data-toggle="modal" data-target="#commentModal" 
+                                      data-comment="{{ inv.comments }}" data-inv-id="{{ inv.id }}" class=" btn btn-outline-info text-grey mt-2 mb-3">Comment</a>
                                   
                                     <a href="{% url 'delete_pricelist' pl.id %}" class="fa fa-trash-o btn btn-outline-info text-grey mt-2 mb-3" role="button"> Delete</a>
-                                    <a href="{% url 'pricelist' %}" class="fa fa-arrow-left btn btn-outline-info text-grey mt-2 mb-3" role="button"> Close</a>
+                                    <!-- <a href="{% url 'pricelist' %}" class="fa fa-arrow-left btn btn-outline-info text-grey mt-2 mb-3" role="button"> Close</a> -->
                                    
                                    
                                      
