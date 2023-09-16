@@ -931,7 +931,7 @@ urlpatterns = [
     
     # urls for Price list
     
-    path('price_list/',views.pricelist,name='pricelist'),
+    # path('price_list/',views.pricelist,name='pricelist'),
     path('new_price_list/',views.new_price_list,name='new_price_list'),
     path('pricelist_editpage/<int:pk>',views.pricelist_editpage,name='pricelist_editpage'),
     path('editpl/<int:pk>',views.editpl,name='editpl'),
@@ -1088,12 +1088,14 @@ urlpatterns = [
  # Abin - Price List , Manual Journal Corrections
  
     re_path(r'^createaccount3$', views.createaccount3, name='createaccount3'),
-    path('add_comment_retinvoice2/<int:id>',views.add_comment_retinvoice2,name='add_comment_retinvoice2'),
+    # path('add_comment_retinvoice2/<int:id>',views.add_comment_retinvoice2,name='add_comment_retinvoice2'),
     #path('vendor_credit_dropdown',views.vendor_credit_dropdown,name='vendor_credit_dropdown'),
 
-    path('iordername2', views.iordername2, name='iordername2'),
+    # path('iordername2', views.iordername2, name='iordername2'),
     # path('sort_pricelist_name', views.sort_pricelist_name, name='sort_pricelist_name'),
-    # path('sort_pricelist_type', views.sort_pricelist_type, name='sort_pricelist_type'),
+    path('pricelist', views.pricelist, name='pricelist'),
+    path('sortemployeename2', views.sortemployeename2, name='sortemployeename2'),
+    path('sortloanamount2', views.sortloanamount2, name='sortloanamount2'),
      
      
 ]

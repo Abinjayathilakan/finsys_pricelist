@@ -31048,8 +31048,9 @@ def add_mjournal(request):
         acc = accounts1.objects.filter(cid=cmp1)
         cust = customer.objects.filter(cid=cmp1)
         vndr = vendor.objects.filter(cid=cmp1)
+        employee=payrollemployee.objects.filter(cid_id=cmp1)
         
-        context = {'acc':acc,'cmp1':cmp1,'cust':cust,'vndr':vndr}
+        context = {'acc':acc,'cmp1':cmp1,'cust':cust,'vndr':vndr,'employee':employee}
         return render(request,'app1/add_mjournal.html',context)   
         
 
@@ -42421,6 +42422,8 @@ def deleteloan(request,eid):
 
 from django.http import JsonResponse
 
+from django.http import JsonResponse
+
 @login_required(login_url='regcomp')
 def createaccount3(request):
     if 'uid' in request.session:
@@ -42428,22 +42431,37 @@ def createaccount3(request):
             uid = request.session['uid']
         else:
             return redirect('/')
+
         cmp1 = company.objects.get(id=request.session['uid'])
-        if request.method=='POST':
+
+        if request.method == 'POST':
             acctype = request.POST['acctype']
             name = request.POST['name']
-            des = request.POST['description']                           
-            balance = request.POST.get('balance')
-            if balance == "":
-                balance=0.0
+            des = request.POST['description']
+            balance = request.POST.get('balance', 0.0)
             asof = request.POST['asof']
-            dbbalance = request.POST['dbbalance']
-            if dbbalance == "":
-                dbbalance = 0.0
-            account = accounts1(acctype=acctype, name=name, description=des, balance=balance, asof=asof, cid=cmp1,dbbalance=dbbalance)
+            dbbalance = request.POST.get('dbbalance', 0.0)
+
+            account = accounts1(
+                acctype=acctype,
+                name=name,
+                description=des,
+                balance=balance,
+                asof=asof,
+                cid=cmp1,
+                dbbalance=dbbalance
+            )
             account.save()
-            return redirect('addexpenses')
-        return render(request,'app1/add_mjournal.html',{'cmp1':cmp1})
+
+            # Return the newly created account as JSON
+            response_data = {
+                'id': account.id,
+                'name': account.name,
+            }
+            return JsonResponse(response_data)
+
+        return render(request, 'app1/add_mjournal.html', {'cmp1': cmp1})
+
     return redirect('/')
 
 # def createaccount3(request):
@@ -42509,29 +42527,49 @@ def createaccount3(request):
    
 #     return render(request,'app1/pricelist.html',{'pricelist':pricelist,'cmp1':cmp1}) 
 
-def add_comment_retinvoice2(request,pk):
-    if request.method == 'POST':
-        ret_inv = pricelist.objects.get(id=id) 
-        ret_inv.comments = request.POST['comment']
-        ret_inv.save()
-        return redirect('pricelist_viewpage',id=ret_inv.id)
+# def add_comment_retinvoice2(request,pk):
+#     if request.method == 'POST':
+#         ret_inv = pricelist.objects.get(id=id) 
+#         ret_inv.comments = request.POST['comment']
+#         ret_inv.save()
+#         return redirect('pricelist_viewpage',id=ret_inv.id)
     
     
-def iordername2(request):
-    try:
-        cmp1 = company.objects.get(id=request.session['uid'])
-        pricelist = pricelist.objects.order_by('name').filter(cid=cmp1)
-        context = {'pricelist':pricelist,'cmp1': cmp1}
-        return render(request, 'app1/pricelist.html',context)      
-    except:
-        return redirect('price_list')
+# def iordername2(request):
+#     try:
+#         cmp1 = company.objects.get(id=request.session['uid'])
+#         pricelist = pricelist.objects.order_by('name').filter(cid=cmp1)
+#         context = {'pricelist':pricelist,'cmp1': cmp1}
+#         return render(request, 'app1/pricelist.html',context)      
+#     except:
+#         return redirect('price_list')
 
-@login_required(login_url='regcomp')
+# @login_required(login_url='regcomp')
+# def pricelist(request):
+#     try:
+#         cmp1 = company.objects.get(id=request.session['uid'])
+#         pricelist = Pricelist.objects.filter(cid=cmp1)
+#         context = {'pricelist':pricelist,'cmp1':cmp1}
+#         return render(request, 'app1/pricelist.html',context)  
+#     except:
+#         return redirect('pricelist')
+    
+    
 def pricelist(request):
-    try:
-        cmp1 = company.objects.get(id=request.session['uid'])
-        pricelist = Pricelist.objects.filter(cid=cmp1)
-        context = {'pricelist':pricelist,'cmp1':cmp1}
-        return render(request, 'app1/pricelist.html',context)  
-    except:
-        return redirect('pricelist')
+    cmp1 = company.objects.get(id=request.session["uid"])
+    employee=Pricelist.objects.filter(company=request.session["uid"])
+    print(employee)
+    return render(request,'app1/pricelist.html',{'employee':employee,'cmp1':cmp1})
+
+def sortemployeename2(request):
+    cmp1 = company.objects.get(id=request.session["uid"])
+    employee=Pricelist.objects.filter(company=request.session["uid"]).order_by('employee__firstname', 'employee__lastname')
+   
+    return render(request,'app1/pricelist.html',{'employee':employee,'cmp1':cmp1})
+
+
+def sortloanamount2(request):
+    cmp1 = company.objects.get(id=request.session["uid"])
+    employee=Pricelist.objects.filter(company=request.session["uid"]).order_by('LoanAmount')
+   
+    return render(request,'app1/pricelist.html',{'employee':employee,'cmp1':cmp1}) 
