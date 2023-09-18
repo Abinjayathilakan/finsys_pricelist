@@ -1089,13 +1089,15 @@ urlpatterns = [
  
     re_path(r'^createaccount3$', views.createaccount3, name='createaccount3'),
     # path('add_comment_retinvoice2/<int:id>',views.add_comment_retinvoice2,name='add_comment_retinvoice2'),
-    #path('vendor_credit_dropdown',views.vendor_credit_dropdown,name='vendor_credit_dropdown'),
+    path('vendor_credit_dropdown',views.vendor_credit_dropdown,name='vendor_credit_dropdown'),
 
     # path('iordername2', views.iordername2, name='iordername2'),
     # path('sort_pricelist_name', views.sort_pricelist_name, name='sort_pricelist_name'),
     path('pricelist', views.pricelist, name='pricelist'),
     path('sortemployeename2', views.sortemployeename2, name='sortemployeename2'),
-    path('sortloanamount2', views.sortloanamount2, name='sortloanamount2'),
+    path('sort_by_types', views.sort_by_types, name='sort_by_types'),
+    path('sort_contactname', views.sort_contactname, name='sort_contactname'),
+    path('sort_journal', views.sort_journal, name='sort_journal'),
      
      
 ]

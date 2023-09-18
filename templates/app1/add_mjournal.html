@@ -2,7 +2,16 @@
 {% block body %}
     {% if user.is_authenticated %}
         {% load static %}
+<head>
+    <!-- Include jQuery (Select2 depends on it) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
+    <!-- Include Select2 CSS and JS files from a CDN -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+    
+
+</head>
         <style type="text/css">
             input {
                 background-color: #2f516f;
@@ -14,6 +23,7 @@
                 border: none;
                 background-color: rgba(0,0,0,.001);
             }
+
         </style>
         <div class="page-content">
             <div class="card radius-15">
@@ -109,14 +119,16 @@
                                                     <tbody id="items-table-body">
                                                     <tr>
                                                         <td>1</td>
+                                                    <div class="search_select_box">
                                                         <td>
                                                             <select name='account[]' id="account" class="form-control" required>
-                                                                <option value="" selected disabled required>Select Account</option>
                                                                 {% for a in acc %}
-                                                                        <option   value="{{ a.name }}">{{ a.name }} </option>
+                                                                    <option value="{{ a.name }}">{{ a.name }}</option>
                                                                 {% endfor %}
                                                             </select>
                                                         </td>
+                                                        
+                                                    </div>
                                                         <td><input type="text" name='jdesc[]' id="jdesc1"
                                                                    placeholder='Enter Description' class="form-control" >
                                                         </td>
@@ -152,7 +164,7 @@
                                                             <select name='account[]' id="account" class="form-control" required>
                                                                 <option value="" selected disabled>Select Account</option>
                                                                 {% for a in acc %}
-                                                                        <option   value="{{ a.name }} {{a.id}}">{{ a.name }} </option>
+                                                                        <option   value="{{a.id}}">{{ a.name }} </option>
                                                                 {% endfor %}
                                                             </select>
                                                         </td>
@@ -485,33 +497,55 @@
 
 
         <script>
-            $(document).ready(function () {
-                $("#modalAccount").submit(function (e) {
-                    e.preventDefault(); // Prevent the form from submitting traditionally
-            
-                    $.ajax({
-                        type: 'POST',
-                        url: "{% url 'createaccount3' %}",
-                        data: $(this).serialize(),
-                        success: function (response) {
-                            // Reset the form
-                            document.getElementById("modalAccount").reset();
-            
-                            // Append the new option to the dropdown
-                            var accountSelect = $("#account");
-                            var newOptionValue = response.id; // Adjust this based on your response structure
-                            var newOptionText = response.name; // Adjust this based on your response structure
-                            accountSelect.append($('<option>', {
-                                value: newOptionValue,
-                                text: newOptionText
-                            }));
-                        },
+            $(document).on("click","#accountSave",function(){
+                $.ajax({
+                  
+                  type : 'POST',
+                  url:"{% url 'createaccount3' %}",
+              
+                  data:{
+                      acctype : $("#acctype").val(),
+                      name : $("#name").val(),
+                      balance : $("#balance").val(),
+                      dbbalance : $("#dbbalance").val(),
+                      asof : $('#asof').val(),
+                      description : $("#description").val(),
+                      csrfmiddlewaretoken: '{{ csrf_token }}'
+                      
+                    },
+                  
+                    success: function(response) {
+                      document.right("printed");
+                      document.getElementById("modalAccount").reset();
+                      reloadVendor();
+                    },
+                });        
+              });
+              
+              function reloadVendor() {
+                document.right("check");
+                $.ajax({
+                  url: "{% url 'vendor_credit_dropdown' %}",
+                  type: "GET",
+                  dataType: "json",
+                  data: $(this).serialize(),
+                  csrfmiddlewaretoken: '{{ csrf_token }}',
+              
+                  success: function(data) {
+                    var dropdown = $('#account');
+                    dropdown.empty();
+                    $.each(data, function(key, value) {
+                        dropdown.append($('<option></option>').attr('value', key).text(value[0]+" " +value[1] + ' ' + value[2]).val(value[1] + ' ' + value[2]+ ' ' +value[3]));
                     });
+                  },
+                  error: function(xhr, status, error) {
+                  console.error(xhr.responseText);
+                  }
                 });
-            });
-            
+              }
         </script>
 
+        
 
         <!-- <script>
             $('#form').submit(function() {
@@ -528,7 +562,12 @@
                 }
             });
         </script> -->
-
+       <script>
+    $(document).ready(function() {
+        // Initialize Select2 on the 'account' dropdown
+        $('#account').select2();
+    });
+</script>
 
        
     {% endif %}

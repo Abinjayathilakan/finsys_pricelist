@@ -87,21 +87,21 @@
                                         data-toggle="dropdown"> Sort by
                                 </button>
                                 <div class="dropdown-menu " style="background-color: black;">
-                                    <a class="dropdown-item" href="{% url 'gosalesorder' %}"
+                                    <a class="dropdown-item" href="{% url 'gomjoural' %}"
                                         style="height: 40px; font-size: 15px; color: white; text-align: center;" >All</a>
-                                <a class="dropdown-item" href="{% url 'sales_num_asc' %}"
-                                    style="height: 40px; font-size: 15px; color: white; text-align: center;" >Sales Order Number </a>
+                                <a class="dropdown-item" href="{% url 'sort_contactname' %}"
+                                    style="height: 40px; font-size: 15px; color: white; text-align: center;" >Contact Name </a>
                                 <!-- <a class="dropdown-item  " href="{% url 'sales_num_desc' %}"
                                     style="height: 40px; font-size: 15px; color: white; text-align: center;" >Sales Order Number <icon class=" fas fa-arrow-up"></icon></a> -->
 
-                                <a class="dropdown-item " href="{% url 'sales_date_asc' %}"
-                                    style="height: 40px; font-size: 15px; color: white; text-align: center; " >Date  </a>
+                                <a class="dropdown-item " href="{% url 'sort_journal' %}"
+                                    style="height: 40px; font-size: 15px; color: white; text-align: center; " >Journal No</a>
                                 <!-- <a class="dropdown-item " href="{% url 'sales_date_desc' %}"
                                     style="height: 40px; font-size: 15px; color: white; text-align: center;" >Date <icon class=" fas fa-arrow-up"></icon></a> -->
 
-                                <a class="dropdown-item  " href="{% url 'sales_cust_asc' %}"
+                                <!-- <a class="dropdown-item  " href="{% url 'sales_cust_asc' %}"
                                     style="height: 40px; font-size: 15px; color: white; text-align: center;" >
-                                        Customer  </a>
+                                        Customer  </a> -->
                                 <!-- <a class="dropdown-item  " href="{% url 'sales_cust_desc' %}"
                                     style="height: 40px; font-size: 15px; color: white; text-align: center;" >Customer <icon class=" fas fa-arrow-up"></icon></a> -->
                                     
@@ -146,40 +146,38 @@
                                     <th style="text-transform: uppercase;">STATUS</th>
                                     <th style="text-transform: uppercase;">NOTES</th>
                                     <th style="text-transform: uppercase;">AMOUNT</th>
-                                    <!-- <th style="text-align: center;">ACTION</th> -->
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for a in mj %}
-                <tr class='clickable-row' data-href="view_mj/{{ a.id }}" >
-                                <td>{{ a.date }}</td>
-                                <td>{{ a.mj_no }}</td>
-                                <td>{{ a.ref_no }}</td>
-                                <td >
-                                    {% if a.status == 'Publish' %}
-                                   Published
-                                    {% else %}
-                                    Draft
-                                    {% endif %}
-                                </td>
-                                <!-- <td>{{ a.notes }}</td> -->
-                                <td>
-                                    <div class="description-tooltip" data-toggle="tooltip" data-placement="top" title="{{  a.notes }}">
-                                        <i class="fas fa-sticky-note">*</i>
-                                    </div>
-                                </td>
-                                <td>{{ a.total_deb }}</td>
-                                <!-- <td>{{ a.attach }}</td> -->
-                                
-                                        
-                                    
-
-                                </a>
-                            </tr>
-                     
-                    {% endfor %}
+                                    <tr class='clickable-row' data-href="view_mj/{{ a.id }}">
+                                        <td>{{ a.date }}</td>
+                                        <td>{{ a.mj_no }}</td>
+                                        <td>
+                                            {% for a1 in a.mjournal1_set.all %}
+                                                {{ a1.contact }}
+                                            {% empty %}
+                                                Contact Not Found
+                                            {% endfor %}
+                                        </td>
+                                        <td>
+                                            {% if a.status == 'Publish' %}
+                                                Published
+                                            {% else %}
+                                                Draft
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <div class="description-tooltip" data-toggle="tooltip" data-placement="top" title="{{ a.notes }}">
+                                                <i class="fas fa-sticky-note">*</i>
+                                            </div>
+                                        </td>
+                                        <td>{{ a.total_deb }}</td>
+                                    </tr>
+                                {% endfor %}
                             </tbody>
                         </table>
+                        
                     </div>
                 </div>
             </div>

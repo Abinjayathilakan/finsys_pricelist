@@ -27,9 +27,9 @@
 
                                     <a href="{% url 'pricelist_editpage' pl.id %}" class=" fa fa-pencil btn btn-outline-info text-grey mt-2 mb-3" role="button"> Edit</a>
                                     {% if pl.is_active %}
-                                    <a href="{% url 'inactive_pricelist' pl.id %}" class=" fa fa fa-times btn btn-outline-info text-grey mt-2 mb-3" role="button"> Inactive</a>
+                                    <a href="{% url 'inactive_pricelist' pl.id %}" class=" fa fa fa-check btn btn-outline-info text-grey mt-2 mb-3" role="button"> Active</a>
                                     {% else %}
-                                    <a href="{% url 'active_pricelist' pl.id %}" class=" fa fa-check btn btn-outline-info text-grey mt-2 mb-3" role="button"> Active</a>
+                                    <a href="{% url 'active_pricelist' pl.id %}" class=" fa fa-times btn btn-outline-info text-grey mt-2 mb-3" role="button"> Inactive</a>
                                     {% endif %}
                                     
                                     <a href="#"  data-toggle="modal" data-target="#commentModal" 

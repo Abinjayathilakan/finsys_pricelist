@@ -69,9 +69,9 @@
                     <div class="card-title">
                         <center><h2 class="mb-0">ALL PRICE LIST</h2></center>
                         <hr>
-                        <div class="btn-group col-md-2" style="float: right;">
+                        <!-- <div class="btn-group col-md-2" style="float: right;">
                             <a class="btn btn-outline-info text-grey" onclick="ExportToExcel('xlsx')">Export To Excel</a>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
             </div>
@@ -89,19 +89,19 @@
                                         data-toggle="dropdown"> Sort by
                                 </button>
                                 <div class="dropdown-menu " style="background-color: black;">
-                                    <a class="dropdown-item	" href="{% url 'employeeloanpage' %}"
+                                    <a class="dropdown-item	" href="{% url 'pricelist' %}"
                                     style="height: 40px; font-size: 15px; color: white; text-align: center;" > All
                                     <!-- <icon class=" fas fa-arrow-down"></icon> -->
                                </a>
-                                <a class="dropdown-item	" href="{% url 'sortemployeename' %}"
+                                <a class="dropdown-item	" href="{% url 'sortemployeename2' %}"
                                     style="height: 40px; font-size: 15px; color: white; text-align: center;" > Employee Name
                                     <!-- <icon class=" fas fa-arrow-down"></icon> -->
                                </a>
                                  <!-- <a class="dropdown-item  " href="{% url 'est_num_desc' %}"
                                     style="height: 40px; font-size: 15px; color: white; text-align: center;" >Estimate Number <icon class=" fas fa-arrow-up"></icon></a> -->
 
-                                <a class="dropdown-item " href="{% url 'sortloanamount' %}"
-                                    style="height: 40px; font-size: 15px; color: white; text-align: center; " >Loan Amount</a>
+                                <a class="dropdown-item " href="{% url 'sort_by_types' %}"
+                                    style="height: 40px; font-size: 15px; color: white; text-align: center; " >Type</a>
                                 <!-- <a class="dropdown-item " href="{% url 'est_date_desc' %}"
                                     style="height: 40px; font-size: 15px; color: white; text-align: center;" >Date <icon class=" fas fa-arrow-up"></icon></a> -->
 
@@ -131,8 +131,8 @@
                         </div>
 
                         <div class="col-md-2" >
-                            <a href="{% url 'newemployeeloan' %}" >
-                                <button id="myBtn" class="btn btn-outline-info fa fa-plus text-grey" style="margin-top: 8px;"> Add New Loan</button>
+                            <a href="{% url 'new_price_list' %}" >
+                                <button id="myBtn" class="btn btn-outline-info fa fa-plus text-grey" style="margin-top: 8px;"> Price List</button>
                             </a>
                         </div>
 
@@ -141,32 +141,47 @@
                         <table class="table table-responsive-md mt-4 table-hover" id="tbl_exporttable_to_xls">
                             <thead>
                                 <tr>
-                                    <th style="text-align: center; text-transform: uppercase;">Loan Date</th>
-                     
-                                    <th style="text-align: center; text-transform: uppercase;">Employee Name</th>
-                                    <th style="text-align: center; text-transform: uppercase;">Employee No</th>
-                                    <th style="text-align: center; text-transform: uppercase;">Email Id</th>
-                                    <th style="text-align: center; text-transform: uppercase;">Expery Date</th>
-                                    <th style="text-align: center; text-transform: uppercase;">Loan Amount</th>
+                                    <th>NAME</th>
+                                    <th>DESCRIPTION</th>
+                                    <th>TYPE</th>
+                                    <th>ITEM RATE</th>
+                                    <th>ROUNDING</th>
+                                    <th>STATUS</th>
+                                    <th>DETAILS</th>
                            
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for emp in employee %}
-                                    {% if emp.company.cid == cmp1.cid %}
+                                    
                                         <tr  class="table-row " >
-                                            <td style="text-align: center;"><a class="idsr" style="list-style: none;"  href="{% url 'pricelist_viewpage'  emp.id  %}"> {{ emp.name }}</a></td>
+                                            <td ><a class="idsr" style="list-style: none;"  href="{% url 'pricelist_viewpage'  emp.id  %}"> {{ emp.name }}</a></td>
                                             
-                                            <td style="text-align: center;"><a class="idsr" style="list-style: none;"  href="{% url 'pricelist_viewpage'  emp.id  %}"> {{ emp.description.firstname }} {{ emp.employee.lastname }}</a></td>
-                                            <th style="text-align: center;"><a class="idsr" style="list-style: none;"  href="{% url 'pricelist_viewpage'  emp.id  %}"> {{ emp.types.employeeno }}</a></th>
-                                            <td style="text-align: center;"><a class="idsr" style="list-style: none;"  href="{% url 'pricelist_viewpage'  emp.id  %}"> {{ emp.item_rate.email }}</a></td>
-                                            <td style="text-align: center;"><a class="idsr" style="list-style: none;"  href="{% url 'pricelist_viewpage'  emp.id  %}">{{ emp.ExperyDate }}</a></td>
-                                            <td style="text-align: center;"><a class="idsr" style="list-style: none;"  href="{% url 'pricelist_viewpage'  emp.id  %}">{{ emp.LoanAmount }}</a></td>
+                                            <td ><a class="idsr" style="list-style: none;"  href="{% url 'pricelist_viewpage'  emp.id  %}"> {{ emp.description }}</a></td>
+                                            <th><a class="idsr" style="list-style: none;"  href="{% url 'pricelist_viewpage'  emp.id  %}"> {{ emp.types }}</a></th>
+                                            <th><a class="idsr" style="list-style: none;"  href="{% url 'pricelist_viewpage'  emp.id  %}"> {{ emp.item_rate }}</a></th>
+                                            {% if emp.item_rate == "Customized individual rate" %}
+                                            <td>- - - - -</td>
+                                            {% else %}
+                                            <td>{{emp.roundoffto}}</td>
+                                            {% endif %}
+
+                                            {% if emp.is_active %}
+                                            <td>Active</td>
+                                            {% else %}
+                                            <td>Inactive</td>
+                                            {% endif %}
+                                            
+                                            {% if emp.item_rate == "Customized individual rate" %}
+                                            <td>Per Item Rate</td>
+                                            {% else %}
+                                            <td>{{emp.percentage}}%   {{emp.upordown}}</td>
+                                            {% endif %}
                                             
                                             
                                             
                                         </tr>
-                                    {% endif %}
+                               
                                 {% endfor %}
                             </tbody>
                         </table>

@@ -31032,14 +31032,18 @@ def update_item(request, id):
     except:
         return redirect('goitem')
 
-@login_required(login_url='regcomp')
 def gomjoural(request):
     try:
         cmp1 = company.objects.get(id=request.session['uid'])
         mj = mjournal.objects.filter(cid=cmp1)
-        return render(request,'app1/mjournal.html',{'mj':mj})
+        
+        # Fetch related mjournal1 records for each mjournal record
+        for a in mj:
+            a.mjournal1_set.all()  # This will populate the related mjournal1 records
+            
+        return render(request, 'app1/mjournal.html', {'mj': mj})
     except:
-        return redirect('gomjoural')    
+        return redirect('gomjoural')
 
 @login_required(login_url='regcomp')
 def add_mjournal(request): 
@@ -39371,16 +39375,16 @@ def additem_challan(request):
 
 # ---------------------------------------------------------views for pricelist---------------------
 
-# @login_required(login_url='regcomp')
-# def pricelist(request):
-#     try:
-#         cmp1 = company.objects.get(id=request.session['uid'])
-#         pricelist=Pricelist.objects.filter(cid=cmp1)
-#         context = {'cmp1': cmp1, 'pricelist':pricelist}
-#         return render(request,'app1/pricelist.html',context)
+@login_required(login_url='regcomp')
+def pricelist(request):
+    try:
+        cmp1 = company.objects.get(id=request.session['uid'])
+        employee=Pricelist.objects.filter(cid=cmp1)
+        context = {'cmp1': cmp1, 'employee':employee}
+        return render(request,'app1/pricelist.html',context)
             
-#     except:
-#         return redirect('pricelist')
+    except:
+        return redirect('pricelist')
 
 # def pricelist(request):
 #     cmp1 = company.objects.get(id=request.session["uid"])
@@ -42436,11 +42440,17 @@ def createaccount3(request):
 
         if request.method == 'POST':
             acctype = request.POST['acctype']
+            print(acctype)
             name = request.POST['name']
+            print(name)
             des = request.POST['description']
+            print(des)
             balance = request.POST.get('balance', 0.0)
+            print(balance)
             asof = request.POST['asof']
+            print(asof)
             dbbalance = request.POST.get('dbbalance', 0.0)
+            print(dbbalance)
 
             account = accounts1(
                 acctype=acctype,
@@ -42464,50 +42474,18 @@ def createaccount3(request):
 
     return redirect('/')
 
-# def createaccount3(request):
-#     if 'uid' in request.session:
-#         if request.session.has_key('uid'):
-#             uid = request.session['uid']
-#         else:
-#             return JsonResponse({'success': False, 'message': 'Session key missing'})
 
-#         cmp1 = company.objects.get(id=request.session['uid'])
-
-#         if request.method == 'POST':
-#             acctype = request.POST['acctype']
-#             name = request.POST['name']
-#             des = request.POST['description']
-#             balance = request.POST.get('balance', 0.0)
-#             asof = request.POST['asof']
-#             dbbalance = request.POST.get('dbbalance', 0.0)
-
-#             account = accounts1(
-#                 acctype=acctype,
-#                 name=name,
-#                 description=des,
-#                 balance=balance,
-#                 asof=asof,
-#                 cid=cmp1,
-#                 dbbalance=dbbalance
-#             )
-#             account.save()
-
-#             return JsonResponse({'success': True, 'message': 'Account created successfully'})
-#         else:
-#             return JsonResponse({'success': False, 'message': 'Invalid request method'})
-#     else:
-#         return JsonResponse({'success': False, 'message': 'User not authenticated'})
     
-# @login_required(login_url='login')
-# def vendor_credit_dropdown(request):
-#     user = User.objects.get(id=request.user.id)
+@login_required(login_url='login')
+def vendor_credit_dropdown(request):
+    user = User.objects.get(id=request.user.id)
 
-#     options = {}
-#     option_objects = accounts1.objects.filter(user = user)
-#     for option in option_objects:
+    options = {}
+    option_objects = accounts1.objects.filter(user = user)
+    for option in option_objects:
         
-#         options[option.id] = [option.name]
-#     return JsonResponse(options)
+        options[option.id] = [option.name]
+    return JsonResponse(options)
 
 # def pricelistpage(request):
 #     cmp1 = company.objects.get(id=request.session["uid"])
@@ -42555,21 +42533,48 @@ def createaccount3(request):
 #         return redirect('pricelist')
     
     
-def pricelist(request):
-    cmp1 = company.objects.get(id=request.session["uid"])
-    employee=Pricelist.objects.filter(company=request.session["uid"])
-    print(employee)
-    return render(request,'app1/pricelist.html',{'employee':employee,'cmp1':cmp1})
+# def pricelist(request):
+#     cmp1 = company.objects.get(id=request.session["uid"])
+#     employee=Pricelist.objects.filter(company=request.session["uid"])
+#     print(employee)
+#     return render(request,'app1/pricelist.html',{'employee':employee,'cmp1':cmp1})
 
+@login_required(login_url='regcomp')
 def sortemployeename2(request):
     cmp1 = company.objects.get(id=request.session["uid"])
-    employee=Pricelist.objects.filter(company=request.session["uid"]).order_by('employee__firstname', 'employee__lastname')
-   
-    return render(request,'app1/pricelist.html',{'employee':employee,'cmp1':cmp1})
+    employee = Pricelist.objects.filter(cid=cmp1).order_by('name')  # Assuming 'name' is the field you want to order by
+    return render(request, 'app1/pricelist.html', {'employee': employee, 'cmp1': cmp1})
 
-
-def sortloanamount2(request):
+# @login_required(login_url='regcomp')
+# def sorttype2(request):
+#     cmp1 = company.objects.get(id=request.session["uid"])
+#     employee = Pricelist.objects.filter(cid=cmp1).order_by('types')  # Assuming 'name' is the field you want to order by
+#     return render(request, 'app1/pricelist.html', {'employee': employee, 'cmp1': cmp1})
+@login_required(login_url='regcomp')
+def sort_by_types(request):
     cmp1 = company.objects.get(id=request.session["uid"])
-    employee=Pricelist.objects.filter(company=request.session["uid"]).order_by('LoanAmount')
-   
-    return render(request,'app1/pricelist.html',{'employee':employee,'cmp1':cmp1}) 
+    employee = Pricelist.objects.filter(cid=cmp1).order_by('types')
+    return render(request, 'app1/pricelist.html', {'employee': employee, 'cmp1': cmp1})
+
+
+
+from django.db.models import OuterRef, Subquery
+
+@login_required(login_url='regcomp')
+def sort_contactname(request):
+    cmp1 = company.objects.get(id=request.session["uid"])
+    
+    subquery = mjournal1.objects.filter(mjrnl=OuterRef('id')).order_by('id').values('contact')[:1]
+    
+    mj = mjournal.objects.filter(cid=cmp1).annotate(
+        first_contact=Subquery(subquery)
+    ).order_by('first_contact')
+    
+    return render(request, 'app1/mjournal.html', {'mj': mj, 'cmp1': cmp1})
+
+
+@login_required(login_url='regcomp')
+def sort_journal(request):
+    cmp1 = company.objects.get(id=request.session["uid"])
+    mj = mjournal.objects.filter(cid=cmp1).order_by('mj_no')
+    return render(request, 'app1/mjournal.html', {'mj': mj, 'cmp1': cmp1})
