@@ -1098,6 +1098,7 @@ urlpatterns = [
     path('sort_by_types', views.sort_by_types, name='sort_by_types'),
     path('sort_contactname', views.sort_contactname, name='sort_contactname'),
     path('sort_journal', views.sort_journal, name='sort_journal'),
+    re_path(r'^billconvert2/(?P<id>\d+)$',views.billconvert2,name='billconvert2'),
      
      
 ]

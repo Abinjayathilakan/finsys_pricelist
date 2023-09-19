@@ -42578,3 +42578,17 @@ def sort_journal(request):
     cmp1 = company.objects.get(id=request.session["uid"])
     mj = mjournal.objects.filter(cid=cmp1).order_by('mj_no')
     return render(request, 'app1/mjournal.html', {'mj': mj, 'cmp1': cmp1})
+
+
+def billconvert2(request, id):
+    if 'uid' in request.session:
+        if request.session.has_key('uid'):
+            uid = request.session['uid']
+        else:
+            return redirect('/')
+        cmp1 = company.objects.get(id=request.session['uid'])
+        pbill = mjournal.objects.get(billid=id)
+        pbill.status = 'Billed'
+        pbill.save()
+        return redirect('view_mj', id=id)  # Pass the 'id' parameter to the 'view_mj' view
+    return redirect('/')

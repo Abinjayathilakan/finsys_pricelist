@@ -3,14 +3,11 @@
     {% if user.is_authenticated %}
         {% load static %}
 <head>
-    <!-- Include jQuery (Select2 depends on it) -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-    <!-- Include Select2 CSS and JS files from a CDN -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
-    
-
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/themes/smoothness/jquery-ui.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.jquery.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.min.css">
 </head>
         <style type="text/css">
             input {
@@ -23,7 +20,6 @@
                 border: none;
                 background-color: rgba(0,0,0,.001);
             }
-
         </style>
         <div class="page-content">
             <div class="card radius-15">
@@ -119,16 +115,14 @@
                                                     <tbody id="items-table-body">
                                                     <tr>
                                                         <td>1</td>
-                                                    <div class="search_select_box">
                                                         <td>
-                                                            <select name='account[]' id="account" class="form-control" required>
+                                                            <select  name='account[]' id="account" class="form-control chosen" required>
+      
                                                                 {% for a in acc %}
-                                                                    <option value="{{ a.name }}">{{ a.name }}</option>
+                                                                        <option   value="{{ a.name }}">{{ a.name }} </option>
                                                                 {% endfor %}
                                                             </select>
                                                         </td>
-                                                        
-                                                    </div>
                                                         <td><input type="text" name='jdesc[]' id="jdesc1"
                                                                    placeholder='Enter Description' class="form-control" >
                                                         </td>
@@ -139,6 +133,9 @@
                                                                     <option   value="{{ a.firstname }} {{ a.lastname }}">{{ a.firstname }} {{ a.lastname }} </option>
                                                                 {% endfor %}
                                                                 {% for a in vndr %}
+                                                                    <option   value="{{ a.firstname }} {{ a.lastname }}">{{ a.firstname }} {{ a.lastname }} </option>
+                                                                {% endfor %}
+                                                                {% for a in employee %}
                                                                     <option   value="{{ a.firstname }} {{ a.lastname }}">{{ a.firstname }} {{ a.lastname }} </option>
                                                                 {% endfor %}
                                                             </select>
@@ -562,11 +559,8 @@
                 }
             });
         </script> -->
-       <script>
-    $(document).ready(function() {
-        // Initialize Select2 on the 'account' dropdown
-        $('#account').select2();
-    });
+<script type="text/javascript">
+    $(".chosen").chosen();
 </script>
 
        
