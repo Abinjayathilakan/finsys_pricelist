@@ -1088,7 +1088,7 @@ urlpatterns = [
  # Abin - Price List , Manual Journal Corrections
  
     re_path(r'^createaccount3$', views.createaccount3, name='createaccount3'),
-    # path('add_comment_retinvoice2/<int:id>',views.add_comment_retinvoice2,name='add_comment_retinvoice2'),
+    path('add_comment_retinvoice2/<int:id>',views.add_comment_retinvoice2,name='add_comment_retinvoice2'),
     path('vendor_credit_dropdown',views.vendor_credit_dropdown,name='vendor_credit_dropdown'),
 
     # path('iordername2', views.iordername2, name='iordername2'),
@@ -1099,6 +1099,7 @@ urlpatterns = [
     path('sort_contactname', views.sort_contactname, name='sort_contactname'),
     path('sort_journal', views.sort_journal, name='sort_journal'),
     re_path(r'^billconvert2/(?P<id>\d+)$',views.billconvert2,name='billconvert2'),
-     
-     
+    path('challan_convert2/<int:id>',views.challan_convert2,name='challan_convert2'),
+    path('m_journal_pdf/<int:id>', views.m_journal_pdf, name='m_journal_pdf'),
+    path('m_journal_convert1/<int:id>',views.m_journal_convert1,name='m_journal_convert1'),
 ]

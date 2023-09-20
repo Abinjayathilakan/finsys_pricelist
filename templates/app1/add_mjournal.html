@@ -117,6 +117,7 @@
                                                         <td>1</td>
                                                         <td>
                                                             <select  name='account[]' id="account" class="form-control chosen" required>
+                                                                <option value="" selected disabled>Select Account</option>
       
                                                                 {% for a in acc %}
                                                                         <option   value="{{ a.name }}">{{ a.name }} </option>
@@ -516,6 +517,9 @@
                       document.getElementById("modalAccount").reset();
                       reloadVendor();
                     },
+                    error: function(xhr, status, error) {
+                        console.error(xhr.responseText);
+                    }
                 });        
               });
               
@@ -531,8 +535,8 @@
                   success: function(data) {
                     var dropdown = $('#account');
                     dropdown.empty();
-                    $.each(data, function(key, value) {
-                        dropdown.append($('<option></option>').attr('value', key).text(value[0]+" " +value[1] + ' ' + value[2]).val(value[1] + ' ' + value[2]+ ' ' +value[3]));
+                    $.each(data, function(id, name) {
+                        dropdown.append($('<option>').attr('value', id).text(name));
                     });
                   },
                   error: function(xhr, status, error) {

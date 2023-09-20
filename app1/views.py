@@ -31115,16 +31115,16 @@ def create_mjournal(request):
     return redirect('/')
          
 
-@login_required(login_url='regcomp')
-def view_mj(request,id):
-    try:
-        cmp1 = company.objects.get(id=request.session['uid'])
-        mjl = mjournal.objects.filter(id=id,cid=cmp1)
-        mjl1 = mjournal1.objects.filter(mjrnl=id,cid=cmp1)
-        context = {'mjl':mjl,'mjl1':mjl1,'cmp1': cmp1}
-        return render(request,'app1/view_mj.html',context)
-    except:
-        return redirect('gomjoural')         
+# @login_required(login_url='regcomp')
+# def view_mj(request,id):
+#     try:
+#         cmp1 = company.objects.get(id=request.session['uid'])
+#         mjl = mjournal.objects.filter(id=id,cid=cmp1)
+#         mjl1 = mjournal1.objects.filter(mjrnl=id,cid=cmp1)
+#         context = {'mjl':mjl,'mjl1':mjl1,'cmp1': cmp1}
+#         return render(request,'app1/view_mj.html',context)
+#     except:
+#         return redirect('gomjoural')         
 
 @login_required(login_url='regcomp')
 def mj_edit_page(request,id):  
@@ -42475,6 +42475,7 @@ def createaccount3(request):
     return redirect('/')
 
 
+
     
 @login_required(login_url='login')
 def vendor_credit_dropdown(request):
@@ -42592,3 +42593,112 @@ def billconvert2(request, id):
         pbill.save()
         return redirect('view_mj', id=id)  # Pass the 'id' parameter to the 'view_mj' view
     return redirect('/')
+
+def add_comment_retinvoice2(request,id):
+    if request.method == 'POST':
+        ret_inv = mjournal.objects.get(id=id) 
+        ret_inv.comments = request.POST['comment']
+        ret_inv.save()
+        return redirect('ret_invoice_slip',id=ret_inv.id)
+    
+    
+@login_required(login_url='regcomp')
+
+def view_mj(request,id):
+    cmp1 = company.objects.get(id=request.session['uid'])
+    upd = mjournal.objects.get(id=id, cid=cmp1)
+
+    saleitem = mjournal1.objects.filter(mjrnl=id)
+
+    context ={
+        'sale':upd,
+        'cmp1':cmp1,
+        'saleitem':saleitem,
+        
+
+    }
+
+
+    return render(request,'app1/view_mj.html',context)
+
+
+# @login_required(login_url='regcomp')
+# def view_mj(request,id):
+#     try:
+#         cmp1 = company.objects.get(id=request.session['uid'])
+#         mjl = mjournal.objects.filter(id=id,cid=cmp1)
+#         mjl1 = mjournal1.objects.filter(mjrnl=id,cid=cmp1)
+#         context = {'mjl':mjl,'mjl1':mjl1,'cmp1': cmp1}
+#         return render(request,'app1/view_mj.html',context)
+#     except:
+#         return redirect('gomjoural')
+    
+def challan_convert2(request,id):
+    cmp1 = company.objects.get(id=request.session['uid'])
+    upd = mjournal.objects.get(id=id, cid=cmp1)
+
+    upd.status = 'Approved'
+    upd.save()
+
+
+
+    return redirect(view_mj,id)
+
+def m_journal_pdf(request,id):
+    
+    cmp1 = company.objects.get(id=request.session['uid'])
+    upd = mjournal.objects.get(id=id, cid=cmp1)
+    # if cmp1.state == upd.placeofsupply:
+    #     cgst = upd.CGST
+    #     sgst = upd.SGST
+    #     igst = 0
+    # else:
+    #     igst = upd.IGST
+    #     sgst = 0
+    #     cgst = 0
+    saleitem = mjournal.objects.filter(salesorder=id)
+
+    # total = upd.salestotal
+    words_total = num2words(total)
+    template_path = 'app1/pdfsalesorder.html'
+    context ={
+        'sale':upd,
+        'cmp1':cmp1,
+        'saleitem':saleitem,
+        # 'cust' : cust,
+        # 'sgst' : sgst,
+        # 'cgst' :cgst,
+        # 'igst' : igst,
+
+    }
+    fname=upd.saleno
+   
+    # Create a Django response object, and specify content_type as pdftemp_creditnote
+    response = HttpResponse(content_type='application/pdf')
+    #response['Content-Disposition'] = 'attachment; filename="certificate.pdf"'
+    response['Content-Disposition'] =f'attachment; filename= {fname}.pdf'
+    # find the template and render it.
+    template = get_template(template_path)
+    html = template.render(context)
+
+    # create a pdf
+    pisa_status = pisa.CreatePDF(
+       html, dest=response)
+    
+
+
+    # if error then show some funy view
+    if pisa_status.err:
+       return HttpResponse('We had some errors <pre>' + html + '</pre>')
+    return response
+
+def m_journal_convert1(request,id):
+    cmp1 = company.objects.get(id=request.session['uid'])
+    upd = mjournal.objects.get(id=id, cid=cmp1)
+
+    upd.status = 'Approved'
+    upd.save()
+
+
+
+    return redirect(view_mj,id)
