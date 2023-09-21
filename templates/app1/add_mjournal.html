@@ -115,15 +115,18 @@
                                                     <tbody id="items-table-body">
                                                     <tr>
                                                         <td>1</td>
+
                                                         <td>
-                                                            <select  name='account[]' id="account" class="form-control chosen" required>
-                                                                <option value="" selected disabled>Select Account</option>
-      
+                                                            <select name="account[]" id="account" class="form-control chosen" required>
+                                                                <option value="">Select an option</option>
                                                                 {% for a in acc %}
-                                                                        <option   value="{{ a.name }}">{{ a.name }} </option>
+                                                                    <option value="{{ a.name }}">{{ a.name }}</option>
                                                                 {% endfor %}
                                                             </select>
+                                                            <input type="text" id="search" placeholder="Search..." class="form-control" autocomplete="off"
+                                                                   style="display: none; background-color: #2f516f; color: white;">
                                                         </td>
+
                                                         <td><input type="text" name='jdesc[]' id="jdesc1"
                                                                    placeholder='Enter Description' class="form-control" >
                                                         </td>
@@ -154,7 +157,7 @@
                                                         <td style="display: none;"><input type="number" class="form-control total1"></td>
                                                         <td><input type="checkbox" name="record"></td>
                                                     </tr>    
-                                                    <tr id="#addr0">
+                                                    <!-- <tr id="#addr0">
                                                         <td>2</td>
                                                         <td>
 
@@ -196,7 +199,7 @@
                                                         
                                                         <td><input type="checkbox" name="record"></td>
                                                     
-                                                    </tr>
+                                                    </tr> -->
                                                     </tbody>
                                                     <tr>
                                                         <td style="border: none;"><a class="btn btn-outline-secondary ml-1" role="button" id="addrow" onclick="add_item_row()">+</a></td>
@@ -398,7 +401,7 @@
         </script>
 
         <script>
-            var item_row_counter = 2
+            var item_row_counter = 1
 
             function add_item_row() {
                 old_item_row_count = item_row_counter
@@ -566,6 +569,25 @@
 <script type="text/javascript">
     $(".chosen").chosen();
 </script>
+
+<script>
+    $(document).ready(function () {
+        $("#account").select2(); // Initialize select2 on the dropdown
+
+        // Add a placeholder option for the search input
+        $("#account").prepend('<option value="" disabled selected style="display:none;">Search...</option>');
+        $("#account").val("").trigger("change"); // Clear the default selection
+
+        // Handle changes in the search input
+        $("#account").on("select2:open", function () {
+            // Clear the search input when opening the dropdown
+            $(".select2-search__field").val("");
+        });
+    });
+</script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 
        
     {% endif %}

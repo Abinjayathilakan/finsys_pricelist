@@ -42594,12 +42594,12 @@ def billconvert2(request, id):
         return redirect('view_mj', id=id)  # Pass the 'id' parameter to the 'view_mj' view
     return redirect('/')
 
-def add_comment_retinvoice2(request,id):
-    if request.method == 'POST':
-        ret_inv = mjournal.objects.get(id=id) 
-        ret_inv.comments = request.POST['comment']
-        ret_inv.save()
-        return redirect('ret_invoice_slip',id=ret_inv.id)
+# def add_comment_retinvoice2(request,id):
+#     if request.method == 'POST':
+#         ret_inv = mjournal.objects.get(id=id) 
+#         ret_inv.comments = request.POST['comment']
+#         ret_inv.save()
+#         return redirect('ret_invoice_slip',id=ret_inv.id)
     
     
 @login_required(login_url='regcomp')
@@ -42644,61 +42644,48 @@ def challan_convert2(request,id):
 
     return redirect(view_mj,id)
 
-def m_journal_pdf(request,id):
-    
+
+
+def m_journal_pdf(request, id):
     cmp1 = company.objects.get(id=request.session['uid'])
     upd = mjournal.objects.get(id=id, cid=cmp1)
-    # if cmp1.state == upd.placeofsupply:
-    #     cgst = upd.CGST
-    #     sgst = upd.SGST
-    #     igst = 0
-    # else:
-    #     igst = upd.IGST
-    #     sgst = 0
-    #     cgst = 0
-    saleitem = mjournal.objects.filter(salesorder=id)
+    saleitem = mjournal1.objects.filter(mjrnl=id, cid=cmp1)
 
-    # total = upd.salestotal
-    words_total = num2words(total)
-    template_path = 'app1/pdfsalesorder.html'
-    context ={
-        'sale':upd,
-        'cmp1':cmp1,
-        'saleitem':saleitem,
-        # 'cust' : cust,
-        # 'sgst' : sgst,
-        # 'cgst' :cgst,
-        # 'igst' : igst,
-
+    template_path = 'app1/pdf_manual_journal.html'
+    context = {
+        'sale': upd,
+        'cmp1': cmp1,
+        'saleitem': saleitem,
     }
-    fname=upd.saleno
-   
-    # Create a Django response object, and specify content_type as pdftemp_creditnote
+    fname = upd.mj_no
+
     response = HttpResponse(content_type='application/pdf')
-    #response['Content-Disposition'] = 'attachment; filename="certificate.pdf"'
-    response['Content-Disposition'] =f'attachment; filename= {fname}.pdf'
-    # find the template and render it.
+    response['Content-Disposition'] = f'attachment; filename={fname}.pdf'
     template = get_template(template_path)
     html = template.render(context)
 
-    # create a pdf
-    pisa_status = pisa.CreatePDF(
-       html, dest=response)
-    
+    pisa_status = pisa.CreatePDF(html, dest=response)
 
-
-    # if error then show some funy view
     if pisa_status.err:
-       return HttpResponse('We had some errors <pre>' + html + '</pre>')
+        return HttpResponse('We had some errors <pre>' + html + '</pre>')
+    
     return response
+
 
 def m_journal_convert1(request,id):
     cmp1 = company.objects.get(id=request.session['uid'])
     upd = mjournal.objects.get(id=id, cid=cmp1)
 
-    upd.status = 'Approved'
+    upd.status = 'Publish'
     upd.save()
 
 
 
     return redirect(view_mj,id)
+
+def add_comment_retinvoice3(request, id):
+    if request.method == 'POST':
+        ret_inv = mjournal.objects.get(id=id)
+        ret_inv.comments = request.POST['comment']
+        ret_inv.save()
+        return redirect('view_mj', id=ret_inv.id)

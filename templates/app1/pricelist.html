@@ -156,14 +156,24 @@
                                     
                                         <tr  class="table-row " >
                                             <td ><a class="idsr" style="list-style: none;"  href="{% url 'pricelist_viewpage'  emp.id  %}"> {{ emp.name }}</a></td>
-                                            
-                                            <td ><a class="idsr" style="list-style: none;"  href="{% url 'pricelist_viewpage'  emp.id  %}"> {{ emp.description }}</a></td>
+
+                                            <!-- <div  data-toggle="tooltip" data-placement="top" title="{{ a.notes }}">
+                                                <i class="fa fa-commenting" aria-hidden="true"></i>
+
+                                            </div> -->
+
+                                            <td>
+                                                <a class="idsr" style="list-style: none;" data-toggle="tooltip" data-placement="top" href="{% url 'pricelist_viewpage' emp.id %}" title="{{ emp.description }}">
+                                                  <i class="fa fa-commenting" aria-hidden="true"></i>
+                                                </a>
+                                              </td>
+                                              
                                             <th><a class="idsr" style="list-style: none;"  href="{% url 'pricelist_viewpage'  emp.id  %}"> {{ emp.types }}</a></th>
                                             <th><a class="idsr" style="list-style: none;"  href="{% url 'pricelist_viewpage'  emp.id  %}"> {{ emp.item_rate }}</a></th>
                                             {% if emp.item_rate == "Customized individual rate" %}
                                             <td>- - - - -</td>
                                             {% else %}
-                                            <td>{{emp.roundoffto}}</td>
+                                            <td><a class="idsr" style="list-style: none;"  href="{% url 'pricelist_viewpage'  emp.id  %}"></a>{{emp.roundoffto}}</a></td>
                                             {% endif %}
 
                                             {% if emp.is_active %}
@@ -173,9 +183,9 @@
                                             {% endif %}
                                             
                                             {% if emp.item_rate == "Customized individual rate" %}
-                                            <td>Per Item Rate</td>
+                                            <td><a class="idsr" style="list-style: none;"  href="{% url 'pricelist_viewpage'  emp.id  %}"></a>Per Item Rate</a></td>
                                             {% else %}
-                                            <td>{{emp.percentage}}%   {{emp.upordown}}</td>
+                                            <td> <a class="idsr" style="list-style: none;"  href="{% url 'pricelist_viewpage'  emp.id  %}">{{emp.percentage}}%   {{emp.upordown}}</a></td>
                                             {% endif %}
                                             
                                             

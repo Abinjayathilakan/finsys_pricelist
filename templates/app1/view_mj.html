@@ -389,16 +389,23 @@ footer p {
                             <div class="dropdown p-0 nav-item mx-1 " style="margin-top: 10px;">
                               <li  class="btn btn-outline-info rounded-pill text-grey p-1  dropdown-toggle  "data-toggle="dropdown"> &nbsp;&nbsp;Convert&nbsp;&nbsp;</li>
                                 <ul class="dropdown-menu" style="background-color: black;">
-                                    <a class="dropdown-item " href="{% url 'sale_convert1' sale.id  %}"> &nbsp;Approved </a>
+                                    <a class="dropdown-item " href="{% url 'm_journal_convert1' sale.id  %}"> &nbsp;Published </a>
                                     <!-- {% if sale.status != 'Invoice' %}
                                     <a class="dropdown-item " href="{% url 'sale_convert2' sale.id  %}"> &nbsp;Invoice</a>
                                     {% endif %} -->
                                 </ul>
                               
                             </div>
+
                             
 
-                            <div class="dropdown p-0 nav-item mx-1 "  style="margin-top: 10px;">
+                            <li class="nav-item mx-1">
+                                <a href="#" class=" btn btn-outline-info rounded-pill text-grey p-1" data-toggle="modal" data-target="#commentModal" 
+                                data-comment="{{ inv.comments }}" data-inv-id="{{ inv.id }}">&nbsp;&nbsp;Comment&nbsp;&nbsp;</a>
+                          
+                            </li>
+
+                            <!-- <div class="dropdown p-0 nav-item mx-1 "  style="margin-top: 10px;">
                               <li  class=" dropdown-toggle btn btn-outline-info rounded-pill text-grey p-1"data-toggle="dropdown"> &nbsp;&nbsp;Share&nbsp;&nbsp;</li>
                               <ul class="dropdown-menu" style="background-color: black;">
       
@@ -417,7 +424,7 @@ footer p {
                                     <a class="dropdown-item fas fa-download" style="cursor: pointer;"download  href="{{ sale.file.url }}" >Download file</a>
                                     {% endif %}
                                 </ul>
-                            </div>
+                            </div> -->
                         </ul>
                     </div>
                 </nav>
@@ -489,18 +496,13 @@ footer p {
                                         <td>CONTACT</td>
                                         <td>DEBITS</td>
                                         <td>CREDITS</td>
-                                        
                                     </tr>
                                 </thead>
                                 <tbody>
 
                                     {% for j in saleitem %}
                                     <tr>
-                                        <td style="color:black">
-                                            {{j.account}}
-                                            
-                                        </td>
-                                        
+                                        <td style="color:black">{{j.account}}</td>
                                         <td style="color:black">{{j.contact}}</td>
                                         <td style="color:black">{{j.debit}}.00</td>
                                         <td style="color:black">{{j.credit}}.00 </td>
@@ -620,6 +622,46 @@ footer p {
             
         
             </div>
+
+            <div class="modal fade" id="commentModal" tabindex="-1" role="dialog" aria-labelledby="commentModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="commentModalLabel">Add/Edit Comment</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="existing-comment"></div>
+                            <form id="comment-form" action="{% url 'add_comment_retinvoice3' sale.id %}" method="POST">
+                                {% csrf_token %}
+                                <!-- Display existing comments if they exist -->
+                                {% if sale.comments %}
+                                <label class="text-center">Existing Comment:</label>
+                                <p>{{ sale.comments }}</p>
+                                <label for="">Change Comment If Needed..</label>
+                                <textarea style="width: 100%;" name="comment" placeholder="Edit the comment">{{ sale.comments }}</textarea>
+                                {% else %}
+                                <!-- If no existing comment, allow user to add a new one -->
+                                <textarea style="width: 100%;" name="comment" placeholder="Add a comment"></textarea>
+                                {% endif %}
+                                <div class="text-center pt-4 pb-2">
+                                    <button class="btn btn-info" type="submit">Submit</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+
+            <li class="nav-item mx-1">
+                <a href="#" class="btn btn-outline-info rounded-pill text-grey p-1" data-toggle="modal" data-target="#commentModal" data-comment="{{ inv.comments }}" data-inv-id="{{ inv.id }}">&nbsp;&nbsp;Comment&nbsp;&nbsp;</a>
+            </li>
+
+            
+            
 
 
             <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>

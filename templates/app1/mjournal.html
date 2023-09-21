@@ -2,8 +2,8 @@
 {% block body %}
 {% load static %}
     {% if user.is_authenticated %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 
-  
       <style>
         @import url(https://fonts.googleapis.com/css?family=Open+Sans);
 
@@ -131,7 +131,7 @@
                         </div>
                         <div class="col-md-2" >
                             <a href="{% url 'add_mjournal' %}" >
-                                <button id="myBtn" class="btn btn-outline-info text-grey fas fa-plus" style="margin-top: 8px;">&nbsp; + Add Journal</button>
+                                <button id="myBtn" class="btn btn-outline-info text-grey fa fa-plus" style="margin-top: 8px;">&nbsp; Add Journal</button>
                             </a>
                         </div>
 
@@ -144,7 +144,7 @@
                                     <th style="text-transform: uppercase;">JOURNAL NO</th>
                                     <th style="text-transform: uppercase;">CONTACT NAME</th>
                                     <th style="text-transform: uppercase;">STATUS</th>
-                                    <th style="text-transform: uppercase;">NOTES</th>
+                                    <th style="text-transform: uppercase;text-align: center;">NOTES</th>
                                     <th style="text-transform: uppercase;">AMOUNT</th>
                                 </tr>
                             </thead>
@@ -167,11 +167,18 @@
                                                 Draft
                                             {% endif %}
                                         </td>
-                                        <td>
-                                            <div class="description-tooltip" data-toggle="tooltip" data-placement="top" title="{{ a.notes }}">
-                                                <i class="fas fa-sticky-note">*</i>
+                                        <!-- <td>
+                                            <div  data-toggle="tooltip" data-placement="top" title="{{ a.notes }}">
+                                                <i class="fa fa-commenting" aria-hidden="true"></i>
+
                                             </div>
-                                        </td>
+                                        </td> -->
+                                        <td>
+                                            <div style="list-style: none;text-align: center;" data-toggle="tooltip" data-placement="top" title="{{ a.notes }}">
+                                                <i class="fa fa-commenting" aria-hidden="true"></i>
+                                            </div>
+                                          </td>
+                                          
                                         <td>{{ a.total_deb }}</td>
                                     </tr>
                                 {% endfor %}
