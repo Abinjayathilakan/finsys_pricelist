@@ -2,13 +2,13 @@
 {% block body %}
     {% if user.is_authenticated %}
         {% load static %}
-<head>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/themes/smoothness/jquery-ui.css">
-<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.jquery.js"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.min.css">
-</head>
+<!-- Include the Select2 CSS and JavaScript files -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+
+
+        
+        
         <style type="text/css">
             input {
                 background-color: #2f516f;
@@ -117,16 +117,14 @@
                                                         <td>1</td>
 
                                                         <td>
-                                                            <select name="account[]" id="account" class="form-control chosen" required>
-                                                                <option value="">Select an option</option>
+                                                            <select name='account[]' id="account" class="form-control" required>
+                                                                <option value="" selected disabled>Select Account</option>
                                                                 {% for a in acc %}
                                                                     <option value="{{ a.name }}">{{ a.name }}</option>
                                                                 {% endfor %}
                                                             </select>
-                                                            <input type="text" id="search" placeholder="Search..." class="form-control" autocomplete="off"
-                                                                   style="display: none; background-color: #2f516f; color: white;">
                                                         </td>
-
+                                                        
                                                         <td><input type="text" name='jdesc[]' id="jdesc1"
                                                                    placeholder='Enter Description' class="form-control" >
                                                         </td>
@@ -274,11 +272,29 @@
                                             BACK
                                          </a>
                                         </div>
-                                        <div class="col-md-4">
+
+                                        <div class="" style="margin-bottom: 20rem;">
+                                            <button type="submit" name="sd" class="btn btn-outline-info rounded-pill w-10 text-light " 
+                                                value="Draft">Save as Draft</button>
+                                            <button type="submit" name="sd" class="btn btn-outline-info rounded-pill w-10 text-light" 
+                                                value="Published">Save</button>
+                                                <input class="btn btn-outline-info rounded-pill w-10 text-light" type="reset"
+                                                value="Cancel" >
+                                        </div>
+
+                                        <!-- <div class="col-md-4">
                                             <button class="btn btn-outline-info rounded-pill w-100 text-light"
                                                     type="submit">SAVE
                                             </button>
-                                        </div>
+                                        </div> -->
+                                        <!-- <div class="row">
+                                            <input type="submit" class="btn btn-secondary btn-outline-info text-white mt-5 ml-5"
+                                                onclick="saveAsDraftDialog()" value="Save As Draft">
+                                            <input type="submit" class="btn btn-info btn-outline-secondary text-white mt-5 ml-3"
+                                                onclick="saveAndSendDialog()" value="Save And Send">
+                                            <input type="submit" class="btn btn-secondary btn-outline-info text-white mt-5 ml-3"
+                                                onclick="cancelDialog()" value="Cancel">
+                                        </div> -->
                                         <div class="col-md-4"></div>
                                     </div>
                                        
@@ -549,6 +565,16 @@
               }
         </script>
 
+        <!-- <script>
+            // Initialize Select2 on your select element
+            $(document).ready(function () {
+                $('#account').select2({
+                    placeholder: 'Select Account',
+                    allowClear: true // Option to clear the selection
+                });
+            });
+        </script> -->
+        
         
 
         <!-- <script>
@@ -566,27 +592,12 @@
                 }
             });
         </script> -->
-<script type="text/javascript">
-    $(".chosen").chosen();
-</script>
-
-<script>
-    $(document).ready(function () {
-        $("#account").select2(); // Initialize select2 on the dropdown
-
-        // Add a placeholder option for the search input
-        $("#account").prepend('<option value="" disabled selected style="display:none;">Search...</option>');
-        $("#account").val("").trigger("change"); // Clear the default selection
-
-        // Handle changes in the search input
-        $("#account").on("select2:open", function () {
-            // Clear the search input when opening the dropdown
-            $(".select2-search__field").val("");
-        });
+        <!-- <script type="text/javascript">
+    $(document).ready(function() {
+        // Initialize Chosen with search capabilities
+        $("#account").chosen({ search_contains: true });
     });
-</script>
-
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</script> -->
 
 
        
