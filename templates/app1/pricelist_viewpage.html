@@ -47,9 +47,20 @@
                             <div class="row mb-3">
                                 <div class="col-sm-2 font-weight-bold">Item Rate:</div>
                                 <div class="col-sm-5">
-                                    <p>{{ pl.item_rate }}</p>
+                                    <p>
+                                        {% if pl.item_rate == "Customized individual rate" %}
+                                            Customized individual rate
+                                        {% elif pl.upordown == "Markup" %}
+                                            Markup the item rates by a percentage
+                                        {% elif pl.upordown == "Markdown" %}
+                                            Markdown the item rates by a percentage
+                                        {% else %}
+                                            {{ pl.item_rate }}
+                                        {% endif %}
+                                    </p>
                                 </div>
                             </div>
+                            
                             <div class="row mb-3">
                                 <div class="col-sm-2 font-weight-bold">Description:</div>
                                 <div class="col-sm-5">

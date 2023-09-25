@@ -2,9 +2,13 @@
 {% block body %}
     {% if user.is_authenticated %}
         {% load static %}
-<!-- Include the Select2 CSS and JavaScript files -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+<!-- Include jQuery and Selectize.js scripts -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js" integrity="sha256-+C0A5Ilqmu4QcSPxrlGpaZxJ04VjsRjKu+G82kl5UJk=" crossorigin="anonymous"></script>
+
+<!-- Include Selectize.css for styling -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.bootstrap3.min.css" integrity="sha256-ze/OEYGcFbPRmvCnrSeKbRTtjG4vGLHXgOqsyLFTRjg=" crossorigin="anonymous" />
+
 
 
         
@@ -117,7 +121,7 @@
                                                         <td>1</td>
 
                                                         <td>
-                                                            <select name='account[]' id="account" class="form-control" required>
+                                                            <select name='account[]' id="select-state" placeholder="Pick a Account..." class="form-control" required>
                                                                 <option value="" selected disabled>Select Account</option>
                                                                 {% for a in acc %}
                                                                     <option value="{{ a.name }}">{{ a.name }}</option>
@@ -598,6 +602,14 @@
         $("#account").chosen({ search_contains: true });
     });
 </script> -->
+
+<script>
+    $(document).ready(function () {
+        $('#select-state').selectize({  // Use the correct ID selector
+            sortField: 'text'
+        });
+    });
+</script>
 
 
        

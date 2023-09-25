@@ -39457,7 +39457,18 @@ def create_pricelist(request):
         name=request.POST['name']
         typedata=request.POST['type']
         itemratedata=request.POST['item-rate']
-        print(itemratedata)
+        
+        # Check the selected item-rate value and update it accordingly
+        if itemratedata == 'Markup':
+            itemratedisplay = 'Markup the item rates by a percentage'
+        elif itemratedata == 'Markdown':
+            itemratedisplay = 'Markdown the item rates by a percentage'
+        else:
+            itemratedisplay = 'Markup the item rates by a percentage'  # Default value
+
+            
+        # print(itemratedata)
+        
         description=request.POST['description']
         upordown=request.POST['select']
         percentage=request.POST['cent']

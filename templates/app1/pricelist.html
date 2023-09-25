@@ -169,12 +169,31 @@
                                               </td>
                                               
                                             <th><a class="idsr" style="list-style: none;"  href="{% url 'pricelist_viewpage'  emp.id  %}"> {{ emp.types }}</a></th>
-                                            <th><a class="idsr" style="list-style: none;"  href="{% url 'pricelist_viewpage'  emp.id  %}"> {{ emp.item_rate }}</a></th>
-                                            {% if emp.item_rate == "Customized individual rate" %}
-                                            <td>- - - - -</td>
-                                            {% else %}
-                                            <td><a class="idsr" style="list-style: none;"  href="{% url 'pricelist_viewpage'  emp.id  %}"></a>{{emp.roundoffto}}</a></td>
-                                            {% endif %}
+                                            <th>
+                                                <a class="idsr" style="list-style: none;"  href="{% url 'pricelist_viewpage'  emp.id  %}">
+                                                    {% if emp.item_rate == "Customized individual rate" %}
+                                                        Customized individual rate
+                                                    {% elif emp.upordown == "Markup" %}
+                                                        Markup the item rates by a percentage
+                                                    {% elif emp.upordown == "Markdown" %}
+                                                        Markdown the item rates by a percentage
+                                                    
+                                                    {% else %}
+                                                        {{ emp.item_rate }}
+                                                    {% endif %}
+                                                </a>
+                                            </th>
+                                            <td>
+                                                {% if emp.item_rate == "Customized individual rate" %}
+                                                    - - - - -
+                                                {% elif emp.upordown == "Markup" or emp.upordown == "Markdown" %}
+                                                    {{ emp.roundoffto }}
+                                                {% else %}
+                                                    {{ emp.item_rate }}
+                                                {% endif %}
+                                            </td>
+                                            
+                                            
 
                                             {% if emp.is_active %}
                                             <td>Active</td>
