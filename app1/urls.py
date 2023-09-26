@@ -586,8 +586,8 @@ urlpatterns = [
     re_path(r'^add_mjournal$', views.add_mjournal, name='add_mjournal'),
     re_path(r'^create_mjournal$', views.create_mjournal, name='create_mjournal'),
     re_path(r'^view_mj/(?P<id>\d+)$', views.view_mj, name='view_mj'),
-    re_path(r'^mj_edit_page/(?P<id>\d+)$', views.mj_edit_page, name='mj_edit_page'),
-    re_path(r'^update_mj/(?P<id>\d+)$', views.update_mj, name='update_mj'),
+    path('mj_edit_page/<int:id>/', views.mj_edit_page, name='mj_edit_page'),
+    path('update_mj/<int:id>/', views.update_mj, name='update_mj'),
     re_path(r'^deletemj/(?P<id>\d+)$', views.deletemj, name='deletemj'),
     re_path(r'^mjdraft$', views.mjdraft, name='mjdraft'),
     re_path(r'^mjpublish$', views.mjpublish, name='mjpublish'),
@@ -1102,4 +1102,8 @@ urlpatterns = [
     path('challan_convert2/<int:id>',views.challan_convert2,name='challan_convert2'),
     path('m_journal_pdf/<int:id>', views.m_journal_pdf, name='m_journal_pdf'),
     path('m_journal_convert1/<int:id>',views.m_journal_convert1,name='m_journal_convert1'),
+    path('manualJournal_account',views.manualJournal_account,name='manualJournal_account'),
+    path('man_Journal_acc_dropdown',views.man_Journal_acc_dropdown,name = 'man_Journal_acc_dropdown'),
+
+    
 ]

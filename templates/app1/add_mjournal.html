@@ -24,6 +24,42 @@
                 border: none;
                 background-color: rgba(0,0,0,.001);
             }
+            *,*:after,*:before{
+                -webkit-box-sizing: border-box;
+                -moz-box-sizing: border-box;
+                -ms-box-sizing: border-box;
+                box-sizing: border-box;
+            }
+            body{
+                font-family: arial;
+                font-size: 16px;
+                margin: 0;
+                background: #0f4dff;
+                background: #003ce9;
+                background: #0276ad;
+            
+                color: #fff;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                min-height: 100vh;
+            }
+            
+            #multi_option{
+                max-width: 100%;
+                width: 350px;
+            }
+            label{
+                display:block;
+                font-size: 18px;
+                font-weight: 700;
+                margin-bottom: 5px;
+            }
+            .vscomp-toggle-button{
+                padding: 10px 30px 10px 10px;
+                border-radius: 5px;
+            }
+            
         </style>
         <div class="page-content">
             <div class="card radius-15">
@@ -121,8 +157,9 @@
                                                         <td>1</td>
 
                                                         <td>
-                                                            <select name='account[]' id="select-state" placeholder="Pick a Account..." class="form-control" required>
-                                                                <option value="" selected disabled>Select Account</option>
+                                                            <!-- <input type="text" id="search" placeholder="Search..." class="form-control" autocomplete="off"> -->
+                                                            <select name='account[]' id="account" class="form-control" required>
+                                                                <!-- <select id="multi_option" multiple name="native-select" placeholder="Native Select" data-silent-initial-value-set="false"></select> -->
                                                                 {% for a in acc %}
                                                                     <option value="{{ a.name }}">{{ a.name }}</option>
                                                                 {% endfor %}
@@ -269,6 +306,17 @@
                                                 </table>
                                             </div>
                                     </div>
+
+                                    <!-- <div class="row mt-3">
+                                        <div class="col">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value="" id="invalidCheck" required
+                                                       style="background-color: #2f516f;">
+                                                <label>Agree to terms and conditions</label>
+                                                <div class="invalid-feedback">You must agree before submitting.</div>
+                                            </div>
+                                        </div>
+                                    </div> -->
                                     <div class="row mt-5 mb-5">
                                         <div class="col-md-4">
                                             <a href="{% url 'gomjoural' %}"class="btn btn-outline-info rounded-pill w-25 text-light"
@@ -279,11 +327,10 @@
 
                                         <div class="" style="margin-bottom: 20rem;">
                                             <button type="submit" name="sd" class="btn btn-outline-info rounded-pill w-10 text-light " 
-                                                value="Draft">Save as Draft</button>
+                                                value="Published">Save as Draft</button>
                                             <button type="submit" name="sd" class="btn btn-outline-info rounded-pill w-10 text-light" 
                                                 value="Published">Save</button>
-                                                <input class="btn btn-outline-info rounded-pill w-10 text-light" type="reset"
-                                                value="Cancel" >
+                                        
                                         </div>
 
                                         <!-- <div class="col-md-4">
@@ -333,25 +380,11 @@
                                             <div class="row mt-2 mb-2">
                                                 <div class="col-md-6">
                                                     <label for="acctyp">Account Type</label>
-                                                    <select name="acctype" id="acctype" class="custom-select-md form-control w-100">
-                                                        <!-- <option >Account Receivable</option>
-                                                        <option>Current Assets</option>
-                                                        <option>Bank</option>
-                                                        <option>Fixed Assets</option>
-                                                        <option>Non-Current Assets</option>
-                                                        <option>Accounts Payable</option>
-                                                        <option>Credit Card</option>
-                                                        <option>Current Liabilities</option>
-                                                        <option>Non-Current Liabilities</option>
-                                                        <option>Equity</option>
-                                                        <option>Income</option>
-                                                        <option>Other Incomes</option>
-                                                        <option>Cost Of Goods Sold</option> -->
+                                                    <select name="acctype" id="select1" class="custom-select-md form-control w-100">
+    
                                                         <option>Expenses</option>
                                                         <option>Other Expenses</option>
-                                                        <!-- <option>Undepposited Funds</option>
-                                                        <option>Stock(New)</option>
-                                                        <option>Cash</option> -->
+    
                                                     </select>
                                                 </div>
                                                 <div class="col-md-6">
@@ -382,12 +415,12 @@
                                                     <div class="mt-2">
                                                         <div>
                                                             <label for="asof">As of</label>
-                                                            <input type="date" name="asof" id="asof" class="form-control" value="{{ tod }}">
+                                                            <input type="date" name="asof" id="date1" class="form-control" value="{{ tod }}">
                                                         </div>
                                                     </div>
                                                     <div class="mt-2">
                                                         <label>Description</label>
-                                                    <textarea class="form-control" name="description" id="description" placeholder="Max. 500 Characters"></textarea>
+                                                    <textarea class="form-control" id="description" name="description" placeholder="Max. 500 Characters"></textarea>
                                                     </div>
                                                 </div>
                                             </div>        
@@ -396,7 +429,7 @@
                                                     <div class="col-md-5"></div>
                                                     <div class="col-md-4"></div>
                                                     <div class="col-md-3">
-                                                        <button type="submit" id="accountSave" class="btn btn-outline-info">Save and
+                                                        <button type="submit" class="btn btn-outline-info" data-dismiss="modal" id="accountSave">Save and
                                                             close
                                                         </button>
                                                     </div>
@@ -408,7 +441,6 @@
                             </div>
                         </div>
                     </div>
-
 
 
                 </div>
@@ -478,95 +510,92 @@
                     });
                 }
                 function calc_total() {
-                    total = 0;
-                    total1 = 0;
+                    var total = 0;
+                    var total1 = 0;
                     $('.total').each(function() {
-                        total += parseFloat($(this).val());
+                        total += parseFloat($(this).val()) || 0;
                     });
                     $('.total1').each(function() {
-                        total1 += parseFloat($(this).val());
+                        total1 += parseFloat($(this).val()) || 0;
                     });
-
-                    $('#subtotal').val(parseFloat(total.toFixed(2)));
-                    $('#amount').val(parseFloat(total.toFixed(2)));
-                    $('#sub_total').val(parseFloat(total1.toFixed(2)));
-                    $('#amount1').val(parseFloat(total1.toFixed(2)));
-                    calc_diff();
+            
+                    $('#subtotal').val(total.toFixed(2));
+                    $('#amount').val(total.toFixed(2));
+                    $('#sub_total').val(total1.toFixed(2));
+                    $('#amount1').val(total1.toFixed(2));
+                    calc_diff(total, total1);
                 }
-                function calc_diff() {
-                    $('.subtotal').each(function() {
-                        subtotal += parseFloat($(this).val());
-                    });
-                    $('.sub_total').each(function() {
-                        sub_total += parseFloat($(this).val());
-                    });
-
-                    x=0
+            
+                function calc_diff(subtotal, sub_total) {
+                    var x = 0;
                     if (subtotal == sub_total) {
-                        $('#diff').val(parseFloat(x.toFixed(2)));
-                        $('#diff1').val(parseFloat(x.toFixed(2)));
+                        $('#diff').val(x.toFixed(2));
+                        $('#diff1').val(x.toFixed(2));
                     } else if (subtotal > sub_total) {
-
-                        $('#diff').val(parseFloat(x.toFixed(2)));
+                        $('#diff').val(x.toFixed(2));
+                        $('#diff1').val((subtotal - sub_total).toFixed(2));
                     } else {
-                    // do something if the first input is less than the secongvgd
+                        $('#diff').val((sub_total - subtotal).toFixed(2));
+                        $('#diff1').val(x.toFixed(2));
                     }
                 }
-                
-            }); 
+            });
         </script>
 
 
         <script>
             $(document).on("click","#accountSave",function(){
+
                 $.ajax({
-                  
-                  type : 'POST',
-                  url:"{% url 'createaccount3' %}",
-              
-                  data:{
-                      acctype : $("#acctype").val(),
-                      name : $("#name").val(),
-                      balance : $("#balance").val(),
-                      dbbalance : $("#dbbalance").val(),
-                      asof : $('#asof').val(),
-                      description : $("#description").val(),
-                      csrfmiddlewaretoken: '{{ csrf_token }}'
-                      
+            
+                    type : 'POST',
+                    url:"{% url 'manualJournal_account' %}",
+                
+                    data:{
+                        
+                        acctype : $("#select1").val(),
+                        name : $("#name").val(),
+                        description : $("#description").val(),
+                        balance : $("#balance").val(),
+                        asof : $("#date1").val(),
+                        dbbalance :$("#dbbalance").val(),
+                        csrfmiddlewaretoken: '{{ csrf_token }}'
+                        
                     },
-                  
+                    
                     success: function(response) {
-                      document.right("printed");
-                      document.getElementById("modalAccount").reset();
-                      reloadVendor();
+                        document.getElementById("modalAccount").reset();
+                        reloadExpense();
                     },
-                    error: function(xhr, status, error) {
-                        console.error(xhr.responseText);
-                    }
-                });        
-              });
-              
-              function reloadVendor() {
-                document.right("check");
-                $.ajax({
-                  url: "{% url 'vendor_credit_dropdown' %}",
-                  type: "GET",
-                  dataType: "json",
-                  data: $(this).serialize(),
-                  csrfmiddlewaretoken: '{{ csrf_token }}',
-              
-                  success: function(data) {
-                    var dropdown = $('#account');
-                    dropdown.empty();
-                    $.each(data, function(id, name) {
-                        dropdown.append($('<option>').attr('value', id).text(name));
-                    });
-                  },
-                  error: function(xhr, status, error) {
-                  console.error(xhr.responseText);
-                  }
+                            
                 });
-              }
+            
+               
+            });
+
+            function reloadExpense() {
+
+                $.ajax({
+                    url: "{% url 'man_Journal_acc_dropdown' %}",
+                    type: "GET",
+                    dataType: "json",
+                    data: $(this).serialize(),
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+            
+                    success: function(data) {
+                        var dropdown = $('#account');
+            
+                        dropdown.empty();
+                        $.each(data, function(key, value) {
+                            dropdown.append($('<option></option>').attr('value', key).text(value));
+                        });
+                    },
+            
+                });
+            
+                
+             
+            }
         </script>
 
         <!-- <script>
@@ -603,13 +632,46 @@
     });
 </script> -->
 
-<script>
+<!-- <script>
     $(document).ready(function () {
         $('#select-state').selectize({  // Use the correct ID selector
             sortField: 'text'
         });
     });
+</script> -->
+
+<script>
+    $(document).ready(function() {
+        var $select = $('#account');
+        var $options = $select.find('option');
+        var $search = $('#search');
+
+        $search.on('input', function() {
+            var query = $(this).val().trim().toLowerCase();
+
+            $options.each(function() {
+                var $option = $(this);
+                var optionText = $option.text().trim().toLowerCase();
+                if (optionText.indexOf(query) !== -1) {
+                    $option.show();
+                } else {
+                    $option.hide();
+                }
+            });
+        });
+    });
 </script>
+
+
+
+
+<script type="text/javascript" src="js/virtual-select.min.js"></script>
+<script type="text/javascript">
+	VirtualSelect.init({ 
+	  ele: '#multi_option' 
+	});
+</script>
+
 
 
        

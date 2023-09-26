@@ -40,7 +40,9 @@
                         </div>
                     </div>
 
-                    <form action="update_mj/{{ a.id }} {{mj1.mjrnl}}" method="post" id="form" enctype="multipart/form-data" class="needs-validation" validate>
+                    {% for a in mjrnl %}
+
+                    <form action="{% url 'update_mj' id=a.id %}" method="post" id="form" enctype="multipart/form-data" class="needs-validation" validate>
                         {% csrf_token %}
                         
                         <div class="row">
@@ -157,49 +159,7 @@
                                                         <td><input type="checkbox" name="record"></td>
                                                     </tr>    
                                                     {% endfor %} 
-                                                    <!-- <tr id="#addr0">
-                                                        <td>2</td>
-                                                        <td>
-
-                                                            
-                                                            <select name='account[]' id="account" class="form-control" required>
-                                                                <option value="" selected disabled>Select Account</option>
-                                                                {% for a in acc %}
-                                                                        <option   value="{{a.id}}">{{ a.name }} </option>
-                                                                {% endfor %}
-                                                            </select>
-                                                        </td>
-                                                        <td><input type="text" name='jdesc[]' id="jdesc2"
-                                                                   placeholder='Enter Description' class="form-control">
-                                                        </td>
-                                                        <td>
-                                                            <select name='jcontact[]' id="jcontact2" class="form-control">
-                                                                <option value="null"  >Select Contact</option>
-                                                                {% for a in cust %}
-                                                                    <option   value="{{ a.firstname }} {{ a.lastname }}">{{ a.firstname }} {{ a.lastname }} </option>
-                                                                {% endfor %}
-                                                                {% for a in vndr %}
-                                                                    <option   value="{{ a.firstname }} {{ a.lastname }}">{{ a.firstname }} {{ a.lastname }} </option>
-                                                                {% endfor %}
-                                                                {% for a in employee %}
-                                                                    <option   value="{{ a.firstname }} {{ a.lastname }}">{{ a.firstname }} {{ a.lastname }} </option>
-                                                                {% endfor %}
-                                                            </select>
-                                                        </td>
-                                                        <td>
-                                                            <input type="number" name='jdebit[]' value="0" id="jdebit2"
-                                                                   class="form-control debit" step="0" min="0"/>
-                                                        </td>
-                                                        <td><input type="number" name='jcredit[]' value="0" id="jcredit2"
-                                                                   class="form-control credit" step="0.00"
-                                                                   min="0"/>
-                                                        </td>
-                                                        <td style="display: none;"><input type="number" class="form-control total"></td>
-                                                        <td style="display: none;"><input type="number" class="form-control total1"></td>
-                                                        
-                                                        <td><input type="checkbox" name="record"></td>
-                                                    
-                                                    </tr> -->
+                            
                                                     </tbody>
                                                     <tr>
                                                         <td style="border: none;"><a class="btn btn-outline-secondary ml-1" role="button" id="addrow" onclick="add_item_row()">+</a></td>
@@ -414,6 +374,7 @@
                 </div>
             </div>
         </div>
+        {% endfor %}
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <script>
@@ -478,96 +439,94 @@
                     });
                 }
                 function calc_total() {
-                    total = 0;
-                    total1 = 0;
+                    var total = 0;
+                    var total1 = 0;
                     $('.total').each(function() {
-                        total += parseFloat($(this).val());
+                        total += parseFloat($(this).val()) || 0;
                     });
                     $('.total1').each(function() {
-                        total1 += parseFloat($(this).val());
+                        total1 += parseFloat($(this).val()) || 0;
                     });
-
-                    $('#subtotal').val(parseFloat(total.toFixed(2)));
-                    $('#amount').val(parseFloat(total.toFixed(2)));
-                    $('#sub_total').val(parseFloat(total1.toFixed(2)));
-                    $('#amount1').val(parseFloat(total1.toFixed(2)));
-                    calc_diff();
+            
+                    $('#subtotal').val(total.toFixed(2));
+                    $('#amount').val(total.toFixed(2));
+                    $('#sub_total').val(total1.toFixed(2));
+                    $('#amount1').val(total1.toFixed(2));
+                    calc_diff(total, total1);
                 }
-                function calc_diff() {
-                    $('.subtotal').each(function() {
-                        subtotal += parseFloat($(this).val());
-                    });
-                    $('.sub_total').each(function() {
-                        sub_total += parseFloat($(this).val());
-                    });
-
-                    x=0
+            
+                function calc_diff(subtotal, sub_total) {
+                    var x = 0;
                     if (subtotal == sub_total) {
-                        $('#diff').val(parseFloat(x.toFixed(2)));
-                        $('#diff1').val(parseFloat(x.toFixed(2)));
+                        $('#diff').val(x.toFixed(2));
+                        $('#diff1').val(x.toFixed(2));
                     } else if (subtotal > sub_total) {
-
-                        $('#diff').val(parseFloat(x.toFixed(2)));
+                        $('#diff').val(x.toFixed(2));
+                        $('#diff1').val((subtotal - sub_total).toFixed(2));
                     } else {
-                    // do something if the first input is less than the secongvgd
+                        $('#diff').val((sub_total - subtotal).toFixed(2));
+                        $('#diff1').val(x.toFixed(2));
                     }
                 }
-                
-            }); 
+            });
         </script>
 
 
         <script>
             $(document).on("click","#accountSave",function(){
+
                 $.ajax({
-                  
-                  type : 'POST',
-                  url:"{% url 'createaccount3' %}",
-              
-                  data:{
-                      acctype : $("#acctype").val(),
-                      name : $("#name").val(),
-                      balance : $("#balance").val(),
-                      dbbalance : $("#dbbalance").val(),
-                      asof : $('#asof').val(),
-                      description : $("#description").val(),
-                      csrfmiddlewaretoken: '{{ csrf_token }}'
-                      
+            
+                    type : 'POST',
+                    url:"{% url 'manualJournal_account' %}",
+                
+                    data:{
+                        
+                        acctype : $("#select1").val(),
+                        name : $("#name").val(),
+                        description : $("#description").val(),
+                        balance : $("#balance").val(),
+                        asof : $("#date1").val(),
+                        dbbalance :$("#dbbalance").val(),
+                        csrfmiddlewaretoken: '{{ csrf_token }}'
+                        
                     },
-                  
+                    
                     success: function(response) {
-                      document.right("printed");
-                      document.getElementById("modalAccount").reset();
-                      reloadVendor();
+                        document.getElementById("modalAccount").reset();
+                        reloadExpense();
                     },
-                    error: function(xhr, status, error) {
-                        console.error(xhr.responseText);
-                    }
-                });        
-              });
-              
-              function reloadVendor() {
-                document.right("check");
-                $.ajax({
-                  url: "{% url 'vendor_credit_dropdown' %}",
-                  type: "GET",
-                  dataType: "json",
-                  data: $(this).serialize(),
-                  csrfmiddlewaretoken: '{{ csrf_token }}',
-              
-                  success: function(data) {
-                    var dropdown = $('#account');
-                    dropdown.empty();
-                    $.each(data, function(id, name) {
-                        dropdown.append($('<option>').attr('value', id).text(name));
-                    });
-                  },
-                  error: function(xhr, status, error) {
-                  console.error(xhr.responseText);
-                  }
+                            
                 });
-              }
+            
+               
+            });
+
+            function reloadExpense() {
+
+                $.ajax({
+                    url: "{% url 'man_Journal_acc_dropdown' %}",
+                    type: "GET",
+                    dataType: "json",
+                    data: $(this).serialize(),
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+            
+                    success: function(data) {
+                        var dropdown = $('#account');
+            
+                        dropdown.empty();
+                        $.each(data, function(key, value) {
+                            dropdown.append($('<option></option>').attr('value', key).text(value));
+                        });
+                    },
+            
+                });
+            
+                
+             
+            }
         </script>
+
 
         <!-- <script>
             // Initialize Select2 on your select element

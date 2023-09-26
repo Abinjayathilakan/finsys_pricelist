@@ -31138,8 +31138,9 @@ def mj_edit_page(request,id):
         vndr = vendor.objects.filter(cid=cmp1)
         mjrnl = mjournal.objects.filter(id=id)
         acc  = accounts1.objects.filter(cid=cmp1)
+        employee=payrollemployee.objects.filter(cid_id=cmp1)
         mjl1 = mjournal1.objects.filter(mjrnl=id,cid=cmp1)
-        context = {'mjrnl':mjrnl,'acc':acc,'mj1':mjl1,'cust':cust,'vndr':vndr,'cmp1': cmp1}
+        context = {'mjrnl':mjrnl,'acc':acc,'mj1':mjl1,'cust':cust,'vndr':vndr,'cmp1': cmp1,'employee':employee}
         return render(request,'app1/mj_edit.html',context)
     return redirect('gomjoural') 
 
@@ -31155,7 +31156,7 @@ def update_mj(request, id):
             mjrnl.notes = request.POST.get('jnotes')
             mjrnl.j_type = request.POST.get('jtype')
             mjrnl.currency = request.POST.get('jcurrency')
-            mjrnl.attach = request.POST.get('pic')
+            mjrnl.attach = request.FILES.get('pic')  # Use request.FILES to get uploaded files
             mjrnl.s_totaldeb = request.POST.get('sub_total')
             mjrnl.s_totalcre = request.POST.get('sub_total1')
             mjrnl.total_deb = request.POST.get('total_amount')
@@ -31172,19 +31173,98 @@ def update_mj(request, id):
 
             mjid = request.POST.getlist("id[]")
 
-            id = mjournal.objects.get(id=mjrnl.id)
-
-            if len(acc)==len(desc)==len(cont)==len(deb)==len(cred) and acc and desc and cont and deb and cred and mjid:
-                mapped=zip(acc,desc,cont,deb,cred,mjid)
-                mapped=list(mapped)
-                for ele in mapped:
-                    created = mjournal1.objects.filter(id=ele[5]).update(account = ele[0],desc = ele[1],contact=ele[2],debit=ele[3],
-                    credit=ele[4])
+            # Update related mjournal1 objects
+            if len(acc) == len(desc) == len(cont) == len(deb) == len(cred) == len(mjid):
+                for i in range(len(mjid)):
+                    mjournal1.objects.filter(id=mjid[i]).update(
+                        account=acc[i],
+                        desc=desc[i],
+                        contact=cont[i],
+                        debit=deb[i],
+                        credit=cred[i]
+                    )
 
             return redirect('gomjoural')
-        return render(request,'app1/view_mj.html',{'cmp1': cmp1})    
-    except:
-        return redirect('gomjoural')     
+        return render(request, 'app1/view_mj.html', {'cmp1': cmp1})
+    except mjournal.DoesNotExist:
+        # Handle the case where the mjournal with the given id does not exist
+        return redirect('gomjoural')
+    except Exception as e:
+        # Handle other exceptions or log them for debugging
+        print(str(e))
+        return redirect('gomjoural')
+ 
+    
+# def update_mj(request, id):
+#     journal = get_object_or_404(mjournal, id=id)
+#     accounts = accounts1.objects.all()
+#     vendors = vendor_table.objects.all()
+#     customers = customer.objects.all()
+
+#     if request.method == 'POST':
+#         date = request.POST.get('dateto1')
+#         journal_no = request.POST.get('jnum')
+#         reference_no = request.POST.get('rjnum')
+#         notes = request.POST.get('jnotes')
+#         currency = request.POST.get('jcurrency')
+#         cash_journal = request.POST.get('cash_journal') == 'True'
+
+#         journal.date = dateto1
+#         journal.journal_no = jnum
+#         journal.reference_no = rjnum
+#         journal.notes = jnotes
+#         journal.currency = jcurrency
+#         journal.cash_journal = cash_journal       
+#         journal.user = request.user
+#         old=journal.attachment
+#         new = request.FILES.get('pic')
+#         if old !=None and new==None:
+#             journal.pic=old
+#         else:
+#             journal.pic=new            
+#         journal.save()
+
+#         account_list = request.POST.getlist('account[]')
+#         description_list = request.POST.getlist('jdesc[]')
+#         contact_list = request.POST.getlist('jcontact[]')
+#         debits_list = request.POST.getlist('jdebits[]')
+#         credits_list = request.POST.getlist('jcredits[]')
+
+#         total_debit = 0
+#         total_credit = 0
+
+#         mjournal.objects.filter(journal=journal).delete()
+
+#         for i in range(len(account_list)):
+#             account = account_list[i]
+#             description = description_list[i]
+#             contact = contact_list[i]
+#             debits = debits_list[i]
+#             credits = credits_list[i]
+
+#             journal_entry = mjournal(
+#                 journal=journal,
+#                 account=account,
+#                 description=description,
+#                 contact=contact,
+#                 debits=debits,
+#                 credits=credits
+#             )
+#             journal_entry.save()
+
+#             total_debit += float(debits) if debits else 0
+#             total_credit += float(credits) if credits else 0
+
+#         difference = total_debit - total_credit
+
+#         journal.total_debit = total_debit
+#         journal.total_credit = total_credit
+#         journal.difference = difference
+#         journal.save()
+
+#         return redirect('journal_list')
+
+#     return render(request, 'mj_edit.html', {'journal': journal, 'accounts': accounts, 'vendors': vendors, 'customers': customers, 'cmp1': cmp1})
  
 @login_required(login_url='regcomp')
 def deletemj(request, id):
@@ -42700,3 +42780,42 @@ def add_comment_retinvoice3(request, id):
         ret_inv.comments = request.POST['comment']
         ret_inv.save()
         return redirect('view_mj', id=ret_inv.id)
+
+@login_required(login_url='regcomp')
+def manualJournal_account(request):
+    if 'uid' in request.session:
+        if request.session.has_key('uid'):
+            uid = request.session['uid']
+        else:
+            return redirect('/')
+        cmp1 = company.objects.get(id=request.session['uid'])
+        if request.method=='POST':
+            acctype = request.POST['acctype']
+            name = request.POST['name']
+            des = request.POST['description']                           
+            balance = request.POST.get('balance')
+            if balance == "":
+                balance=0.0
+            asof = request.POST['asof']
+            dbbalance = request.POST['dbbalance']
+            if dbbalance == "":
+                dbbalance = 0.0
+            account = accounts1(acctype=acctype, name=name, description=des, balance=balance, asof=asof, cid=cmp1,dbbalance=dbbalance)
+            account.save()
+            
+            return HttpResponse({"message": "success"})
+        
+def man_Journal_acc_dropdown(request):
+    if 'uid' in request.session:
+        if request.session.has_key('uid'):
+            uid = request.session['uid']
+        else:
+            return redirect('/')
+        comp = company.objects.get(id=request.session["uid"])
+        options = {}
+        option_objects = accounts1.objects.filter(cid = comp)
+        for option in option_objects:
+            print(option.name)
+            options[option.accounts1id] = option.name
+
+        return JsonResponse(options)
