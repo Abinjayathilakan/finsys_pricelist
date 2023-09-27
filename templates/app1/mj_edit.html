@@ -53,15 +53,15 @@
                                             <div class="col-md-3">
                                                 <label class="col-form-label">Date*</label>
                                                 <div class="d-flex">
-                                                    <input type="date" required  name="dateto1" id="date" class="form-control" value="{{ a.date }}" required>
+                                                    <input type="date" required  name="date" id="date" class="form-control" value="{{ a.date }}" required>
                                                 </div>
                                             </div>
                                             <div class="col-md-3">
                                                 <label class="col-form-label">Journal no * </label>
-                                                <input type="text" class="form-control"   id="jno" name="jnum" value="{{ a.mj_no }}" required> </div>
+                                                <input type="text" class="form-control"   id="jno" name="mj_no" value="{{ a.mj_no }}" required> </div>
                                             <div class="col-md-3">
                                                 <label class="col-form-label">Reference no  </label>
-                                                <input type="text" class="form-control"  id="rjno" name="rjnum" value="{{ a.ref_no }}">
+                                                <input type="text" class="form-control"  id="ref_no" name="rjnum" value="{{ a.ref_no }}">
                                             </div>
                                         </div>
                                         <div class="row">
@@ -71,11 +71,11 @@
                                                         <div class="row">
                                                             <div class="col-md-3">
                                                                 <label class="col-form-label">Notes *</label>
-                                                                <textarea class="form-control" rows="3" id="notes" name="jnotes"  required>{{ a.notes }}</textarea>
+                                                                <textarea class="form-control" rows="3" id="notes" name="notes"  required>{{ a.notes }}</textarea>
                                                             </div>
                                                             <div class="col-md-3">
                                                                 <label class="col-form-label">Currency</label>
-                                                                <select class="form-control"  id="currency" name="jcurrency" required>
+                                                                <select class="form-control"  id="currency" name="currency" required>
                                                                     <option value="INR-Indian Rupee">INR-Indian Rupee</option>
                                                                 </select>
                                                             </div>
@@ -92,7 +92,7 @@
                             
                                                 <label class="col-form-label">Journal Type </label>
                                                 <input style="margin-left:90px;" type="checkbox" 
-                                                       name="jtype" id="jtype" value="Cash based journal">
+                                                       name="j_type" id="jtype" value="Cash based journal">
                                                        <label for="jtype" class="col-form-label">Cash based journal</label>
                                             </div>
                                     </div><br>
@@ -116,11 +116,12 @@
                                                     </thead>
                                                     <tbody id="items-table-body">
                                                         {% for a in mj1 %}
+                                                        
                                                     <tr>
                                                         <td>1</td>
 
                                                         <td>
-                                                            <select name='account[]' id="account" class="form-control" required>
+                                                            <select name='account' id="account" class="form-control" required>
                                                                 <option value="{{ a.account }}" >{{ a.account }}</option>
                                                                 {% for a in acc %}
                                                                     <option value="{{ a.name }}">{{ a.name }}</option>
@@ -128,11 +129,11 @@
                                                             </select>
                                                         </td>
                                                         
-                                                        <td><input type="text" name='jdesc[]' id="jdesc1" value="{{ a.desc }}"
+                                                        <td><input type="text" name='desc' id="jdesc1" value="{{ a.desc }}"
                                                                    placeholder='Enter Description' class="form-control" >
                                                         </td>
                                                         <td>
-                                                            <select name='jcontact[]' id="jcontact1" class="form-control" >
+                                                            <select name='contact' id="jcontact1" class="form-control" >
                                                                 <option value="{{ a.contact }}"  >{{ a.contact }}</option>
                                                                 {% for a in cust %}
                                                                     <option   value="{{ a.firstname }} {{ a.lastname }}">{{ a.firstname }} {{ a.lastname }} </option>
@@ -146,11 +147,11 @@
                                                             </select>
                                                         </td>
                                                         <td>
-                                                            <input type="number" name='jdebit[]' id="jdebit1" value="{{ a.debit }}"
+                                                            <input type="number" name='debit' id="jdebit1" value="{{ a.debit }}"
                                                                    class="form-control debit" value="0" step="0" min="0"/>
                                                                    <span id="qtyspan" class="text-muted"></span>
                                                         </td>
-                                                        <td><input type="number" name='jcredit[]' id="jcredit1" value="{{ a.credit }}"
+                                                        <td><input type="number" name='credit' id="jcredit1" value="{{ a.credit }}"
                                                                    class="form-control credit" step="0.00"
                                                                    min="0"/>
                                                         </td>
@@ -176,7 +177,7 @@
                                         <div class="row clearfix" style="margin-top:20px">
                                             <div class="col-md-6">
                                                 <label for="formFileMultiple" class="form-label">Attach File(s)</label><br>
-                                                <input  type="file" name="pic" id="formFileMultiple" value="{{ a.attach }}" multiple />
+                                                <input  type="file" name="attachment" id="formFileMultiple" value="{{ a.attach }}" multiple />
                                             </div>
                                             <div class="col-md-6 table-responsive-md" style="background-color:rgba(0,0,0,.2);">
                                                 <table class="table table-hover"
@@ -231,10 +232,9 @@
                                     </div>
                                     <div class="row mt-5 mb-5">
                                         <div class="col-md-4">
-                                            <a href="{% url 'gomjoural' %}"class="btn btn-outline-info rounded-pill w-25 text-light"
-                                            >
+                                            <a href="{% url 'gomjoural' %}"class="btn btn-outline-info rounded-pill w-25 text-light">
                                             BACK
-                                         </a>
+                                            </a>
                                         </div>
 
                                         <div class="" style="margin-bottom: 20rem;">
@@ -246,19 +246,7 @@
                                                 value="Cancel" >
                                         </div>
 
-                                        <!-- <div class="col-md-4">
-                                            <button class="btn btn-outline-info rounded-pill w-100 text-light"
-                                                    type="submit">SAVE
-                                            </button>
-                                        </div> -->
-                                        <!-- <div class="row">
-                                            <input type="submit" class="btn btn-secondary btn-outline-info text-white mt-5 ml-5"
-                                                onclick="saveAsDraftDialog()" value="Save As Draft">
-                                            <input type="submit" class="btn btn-info btn-outline-secondary text-white mt-5 ml-3"
-                                                onclick="saveAndSendDialog()" value="Save And Send">
-                                            <input type="submit" class="btn btn-secondary btn-outline-info text-white mt-5 ml-3"
-                                                onclick="cancelDialog()" value="Cancel">
-                                        </div> -->
+                                        
                                         <div class="col-md-4"></div>
                                     </div>
                                        

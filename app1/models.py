@@ -1233,22 +1233,25 @@ class unittable(models.Model):
     unit_symbol = models.CharField(max_length=100,null=True)
     name = models.CharField(max_length=100,null=True)
 
+from django.db import models
+
 class mjournal(models.Model):
-    cid = models.ForeignKey(company, on_delete=models.CASCADE,null=True)
-    date = models.CharField(max_length=100, default='')
+    cid = models.ForeignKey(company, on_delete=models.CASCADE, null=True)
+    date = models.DateField(null=True)  # Use DateField for date
     mj_no = models.CharField(max_length=100, default='')
     ref_no = models.CharField(max_length=100, default='')
     notes = models.CharField(max_length=100, default='')
-    j_type = models.CharField(max_length=100,null=True,blank=True)
+    j_type = models.CharField(max_length=100, null=True, blank=True)
     currency = models.CharField(max_length=100, default='')
-    attach = models.FileField(upload_to="", default='') 
-    s_totaldeb = models.CharField(max_length=100, default='')
-    s_totalcre = models.CharField(max_length=100, default='')
-    total_deb = models.CharField(max_length=100, default='')
-    total_cre = models.CharField(max_length=100, default='')
-    difference = models.CharField(max_length=100, default='')
-    comments = models.CharField(max_length=100,null=True)
-    status = models.CharField(max_length=100,default="Draft")
+    attach = models.FileField(upload_to="", default='')
+    s_totaldeb = models.FloatField(default=0.0)  # Use FloatField for numeric values
+    s_totalcre = models.FloatField(default=0.0)
+    total_deb = models.FloatField(default=0.0)
+    total_cre = models.FloatField(default=0.0)
+    difference = models.FloatField(default=0.0)
+    comments = models.CharField(max_length=100, null=True)
+    status = models.CharField(max_length=100, default="Draft")
+
 
 class mjournal1(models.Model):
     mjrnl = models.ForeignKey(mjournal, on_delete=models.CASCADE,null=True)

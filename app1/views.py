@@ -31144,55 +31144,62 @@ def mj_edit_page(request,id):
         return render(request,'app1/mj_edit.html',context)
     return redirect('gomjoural') 
 
-@login_required(login_url='regcomp')
 def update_mj(request, id):
-    try:
-        cmp1 = company.objects.get(id=request.session['uid'])
-        if request.method == 'POST':
-            mjrnl = mjournal.objects.get(id=id)
-            mjrnl.date = request.POST.get('dateto1')
-            mjrnl.mj_no = request.POST.get('jnum')
-            mjrnl.ref_no = request.POST.get('rjnum')
-            mjrnl.notes = request.POST.get('jnotes')
-            mjrnl.j_type = request.POST.get('jtype')
-            mjrnl.currency = request.POST.get('jcurrency')
-            mjrnl.attach = request.FILES.get('pic')  # Use request.FILES to get uploaded files
-            mjrnl.s_totaldeb = request.POST.get('sub_total')
-            mjrnl.s_totalcre = request.POST.get('sub_total1')
-            mjrnl.total_deb = request.POST.get('total_amount')
-            mjrnl.total_cre = request.POST.get('total_amount1')
-            mjrnl.difference = request.POST.get('differ')
-            mjrnl.status = request.POST.get('status')
-            mjrnl.save()
+    mjrnl = get_object_or_404(mjournal, id=id)
+    cmp1 = get_object_or_404(company, id=request.session.get('uid'))
+    print(cmp1)
 
-            acc = request.POST.getlist('account[]')
-            desc = request.POST.getlist('jdesc[]')
-            cont = request.POST.getlist('jcontact[]')
-            deb = request.POST.getlist('jdebit[]')
-            cred = request.POST.getlist('jcredit[]')
+    if request.method == 'POST':
+        date = request.POST.get('date')
+        mj_no = request.POST.get('mj_no')
+        ref_no = request.POST.get('ref_no')
+        notes = request.POST.get('notes')
+        currency = request.POST.get('currency')
+        j_type = request.POST.get('jtype') == 'True'
 
-            mjid = request.POST.getlist("id[]")
+        mjrnl.date = date
+        mjrnl.mj_no = mj_no
+        mjrnl.ref_no = ref_no
+        mjrnl.notes = notes
+        mjrnl.currency = currency
+        mjrnl.j_type = j_type
+        mjrnl.user = request.user
 
-            # Update related mjournal1 objects
-            if len(acc) == len(desc) == len(cont) == len(deb) == len(cred) == len(mjid):
-                for i in range(len(mjid)):
-                    mjournal1.objects.filter(id=mjid[i]).update(
-                        account=acc[i],
-                        desc=desc[i],
-                        contact=cont[i],
-                        debit=deb[i],
-                        credit=cred[i]
-                    )
+        # Set the 'cid' field explicitly to the 'company' object
+        mjrnl.cid = cmp1
 
-            return redirect('gomjoural')
-        return render(request, 'app1/view_mj.html', {'cmp1': cmp1})
-    except mjournal.DoesNotExist:
-        # Handle the case where the mjournal with the given id does not exist
+        mjrnl.save()
+
+        account_list = request.POST.getlist('account')
+        desc_list = request.POST.getlist('desc')
+        contact_list = request.POST.getlist('contact')
+        debit_list = request.POST.getlist('debit')
+        credit_list = request.POST.getlist('credit')
+
+        # Clear existing related entries
+        # mjournal1.objects.filter(mjrnl=mjrnl).delete()
+
+        if len(account_list) == len(desc_list) == len(contact_list) == len(debit_list) == len(credit_list):
+            mapped = zip(account_list, desc_list, contact_list, debit_list, credit_list)
+            mapped = list(mapped)
+            for entry in mapped:
+                
+                account, desc, contact, debit, credit = entry
+                print(f"Account: {account}, Desc: {desc}, Contact: {contact}, Debit: {debit}, Credit: {credit}")
+                journal_entry = mjournal1(
+                    mjrnl=mjrnl,
+                    account=account,
+                    desc=desc,
+                    contact=contact,
+                    debit=debit,
+                    credit=credit
+                )
+                journal_entry.save()
+
         return redirect('gomjoural')
-    except Exception as e:
-        # Handle other exceptions or log them for debugging
-        print(str(e))
-        return redirect('gomjoural')
+
+    return render(request, 'app1/mj_edit.html', {'mjrnl': mjrnl, 'cmp1': cmp1})
+
  
     
 # def update_mj(request, id):
