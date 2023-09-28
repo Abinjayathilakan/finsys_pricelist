@@ -31089,6 +31089,16 @@ def create_mjournal(request):
             mjrnl1 = mjournal(date=mjdate, mj_no=mjno, ref_no=mjrno, notes=notes,j_type=mjtype, currency=currency, attach=file, 
                             s_totaldeb=subtotal, s_totalcre=subtotal1, total_deb=total, total_cre=total1, difference=differ,
                             cid=cmp1)
+            
+            # total_debit += float(debits) if debits else 0
+            # total_credit += float(credits) if credits else 0
+
+            # difference = total_debit - total_credit
+
+            # total_debit = total_debit
+            # total_credit = total_credit
+            # difference = difference
+
 
             if subtotal == subtotal1:
                 mjrnl1.save()
@@ -31164,41 +31174,78 @@ def update_mj(request, id):
         mjrnl.currency = currency
         mjrnl.j_type = j_type
         mjrnl.user = request.user
+        u = User.objects.get(id = request.user.id)
 
         # Set the 'cid' field explicitly to the 'company' object
         mjrnl.cid = cmp1
 
         mjrnl.save()
+        p_bill = mjournal.objects.get(id=mjrnl.id)
 
-        account_list = request.POST.getlist('account')
-        desc_list = request.POST.getlist('desc')
-        contact_list = request.POST.getlist('contact')
-        debit_list = request.POST.getlist('debit')
-        credit_list = request.POST.getlist('credit')
+        account = request.POST.getlist("account")
+        desc = request.POST.getlist("desc")
+        contact = request.POST.getlist("contact")
+        debit = request.POST.getlist("debit")
+        credit = request.POST.getlist("credit")
 
-        # Clear existing related entries
-        # mjournal1.objects.filter(mjrnl=mjrnl).delete()
+        obj_dele = mjournal1.objects.filter(mjrnl=p_bill.id)
+        obj_dele.delete()
+        
+        if len(account) == len(desc) == len(contact) == len(debit) == len(credit) and account and desc and contact and debit and credit:
+                    mapped=zip(account,desc,contact,debit,credit)
+                    mapped=list(mapped)
+                    for ele in mapped:
+                        mjrnlAdd,created = mjournal1.objects.get_or_create(account = ele[0],desc = ele[1],contact=ele[2],debit=ele[3],
+                        credit=ele[4],mjrnl=p_bill,cid=cmp1)
 
-        if len(account_list) == len(desc_list) == len(contact_list) == len(debit_list) == len(credit_list):
-            mapped = zip(account_list, desc_list, contact_list, debit_list, credit_list)
-            mapped = list(mapped)
-            for entry in mapped:
-                
-                account, desc, contact, debit, credit = entry
-                print(f"Account: {account}, Desc: {desc}, Contact: {contact}, Debit: {debit}, Credit: {credit}")
-                journal_entry = mjournal1(
-                    mjrnl=mjrnl,
-                    account=account,
-                    desc=desc,
-                    contact=contact,
-                    debit=debit,
-                    credit=credit
-                )
-                journal_entry.save()
+        # if len(account) == len(desc) == len(contact) == len(debit) == len(credit):
+        #     for i in range(len(account)):
+        #         created = mjournal1.objects.get(
+        #             account=account[i],
+        #             desc=desc[i],
+        #             contact=contact[i],
+        #             debit=debit[i],
+        #             credit=credit[i],
+                    
+        #             # user=u,
+        #             cid=cmp1,
+        #             mjrnl=p_bill
+        #         )
+
+        #         print('Done')
 
         return redirect('gomjoural')
 
     return render(request, 'app1/mj_edit.html', {'mjrnl': mjrnl, 'cmp1': cmp1})
+
+
+    # account = request.POST.getlist("account")
+    # desc = request.POST.getlist("desc")
+    # contact = request.POST.getlist("contact")
+    # debit = request.POST.getlist("debit")
+    # credit = request.POST.getlist("credit")
+
+    # obj_dele = mjournal1.objects.filter(mjrnl=p_bill.id)
+    # obj_dele.delete()
+
+    # if len(account) == len(desc) == len(contact) == len(debit) == len(credit):
+    #     for i in range(len(account)):
+    #         created = mjournal1.objects.create(
+    #             account=account[i],
+    #             desc=desc[i],
+    #             contact=contact[i],
+    #             debit=debit[i],
+    #             credit=credit[i],
+                
+    #             # user=u,
+    #             company=company,
+    #             mjrnl=p_bill
+    #         )
+
+    #         print('Done')
+
+    #     return redirect('view_vendor_credits',id)
+    # return redirect('vendor_credits_home')
 
  
     

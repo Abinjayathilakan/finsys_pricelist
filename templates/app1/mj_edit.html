@@ -120,13 +120,23 @@
                                                     <tr>
                                                         <td>1</td>
 
-                                                        <td>
+                                                        <!-- <td>
                                                             <select name='account' id="account" class="form-control" required>
                                                                 <option value="{{ a.account }}" >{{ a.account }}</option>
                                                                 {% for a in acc %}
                                                                     <option value="{{ a.name }}">{{ a.name }}</option>
                                                                 {% endfor %}
                                                             </select>
+                                                        </td> -->
+
+                                                        <td>
+                                                            <input name="account" list="account" class="form-control" id="pin" style="color: yellow;">
+                                                            <datalist id="account"  required>
+                                                                <option value="{{ a.account }}" >{{ a.account }}</option>
+                                                                {% for a in acc %}
+                                                                        <option value="{{ a.name }}">{{ a.name }} </option>
+                                                                {% endfor %}
+                                                            </datalist>
                                                         </td>
                                                         
                                                         <td><input type="text" name='desc' id="jdesc1" value="{{ a.desc }}"

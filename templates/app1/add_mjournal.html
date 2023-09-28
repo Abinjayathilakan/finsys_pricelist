@@ -2,15 +2,22 @@
 {% block body %}
     {% if user.is_authenticated %}
         {% load static %}
-<!-- Include jQuery and Selectize.js scripts -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js" integrity="sha256-+C0A5Ilqmu4QcSPxrlGpaZxJ04VjsRjKu+G82kl5UJk=" crossorigin="anonymous"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
-<!-- Include Selectize.css for styling -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.bootstrap3.min.css" integrity="sha256-ze/OEYGcFbPRmvCnrSeKbRTtjG4vGLHXgOqsyLFTRjg=" crossorigin="anonymous" />
-
-
-
+        <!-- <script>
+            $(document).ready(function() {
+                $('#account').hide(); // Hide the select element initially
+        
+                $('#accountSelectPlaceholder').on('click', function() {
+                    $('#account').show(); // Show the select element when the placeholder is clicked
+                });
+        
+                $('#account').on('change', function() {
+                    $('#accountSelectPlaceholder').text($(this).find('option:selected').text()); // Update the placeholder text when an option is selected
+                    $('#account').hide(); // Hide the select element again
+                });
+            });
+        </script> -->
         
         
         <style type="text/css">
@@ -156,21 +163,24 @@
                                                     <tr>
                                                         <td>1</td>
 
+                                                        
+
                                                         <td>
-                                                            <!-- <input type="text" id="search" placeholder="Search..." class="form-control" autocomplete="off"> -->
-                                                            <select name='account[]' id="account" class="form-control" required>
-                                                                <!-- <select id="multi_option" multiple name="native-select" placeholder="Native Select" data-silent-initial-value-set="false"></select> -->
+                                                            <input name="account[]" list="account" class="form-control" id="pin">
+                                                            <datalist id="account"  required>
+                                                                <option value="" selected disabled required>Select Account</option>
                                                                 {% for a in acc %}
-                                                                    <option value="{{ a.name }}">{{ a.name }}</option>
+                                                                        <option   value="{{ a.name }}">{{ a.name }} </option>
                                                                 {% endfor %}
-                                                            </select>
+                                                            </datalist>
                                                         </td>
                                                         
                                                         <td><input type="text" name='jdesc[]' id="jdesc1"
                                                                    placeholder='Enter Description' class="form-control" >
                                                         </td>
                                                         <td>
-                                                            <select name='jcontact[]' id="jcontact1" class="form-control" >
+                                                            <input name="jcontact[]" list="jcontact1" class="form-control" id="pin">
+                                                            <datalist id="jcontact1"  >
                                                                 <option value="null"  >Select Contact</option>
                                                                 {% for a in cust %}
                                                                     <option   value="{{ a.firstname }} {{ a.lastname }}">{{ a.firstname }} {{ a.lastname }} </option>
@@ -181,7 +191,7 @@
                                                                 {% for a in employee %}
                                                                     <option   value="{{ a.firstname }} {{ a.lastname }}">{{ a.firstname }} {{ a.lastname }} </option>
                                                                 {% endfor %}
-                                                            </select>
+                                                            </datalist>
                                                         </td>
                                                         <td>
                                                             <input type="number" name='jdebit[]' id="jdebit1"
@@ -640,7 +650,7 @@
     });
 </script> -->
 
-<script>
+<!-- <script>
     $(document).ready(function() {
         var $select = $('#account');
         var $options = $select.find('option');
@@ -660,17 +670,17 @@
             });
         });
     });
-</script>
+</script> -->
 
 
 
 
-<script type="text/javascript" src="js/virtual-select.min.js"></script>
+<!-- <script type="text/javascript" src="js/virtual-select.min.js"></script>
 <script type="text/javascript">
 	VirtualSelect.init({ 
 	  ele: '#multi_option' 
 	});
-</script>
+</script> -->
 
 
 
