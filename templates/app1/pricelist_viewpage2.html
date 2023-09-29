@@ -2,141 +2,169 @@
 {% block body %}
     {% load static %}
     <div class="page-content">
+
         <div class="row">
+
             <div class="col-lg-1"></div>
             <div class="col-lg-10">
+                
                 <div class="card radius-15" style="background-color: #243e54;">
                     <div class="card-body">
                         <form action="" method="post" class="needs-validation" novalidate>
                             {% csrf_token %}
+                            
+                           
+                            
                             <div class="row">
                                 <div class="col-lg-7">
-                                    <h3 class="mb-0 text-center" style="font-family: monospace;">{{ pl.name }}</h3>
+                                    <div class="card-title mt-2">
+                                        <h3 class="mb-0 text-center" style="font-family: monospace;">{{pl.name}}</h3>
+                                    </div>
                                 </div>
-                                <div class="col-lg-5 text-right">
-                                    <a href="{% url 'pricelist_editpage' pl.id %}" class="btn btn-info text-white mt-2 mb-3">
-                                        <i class="fa fa-pencil" aria-hidden="true"></i> Edit
-                                    </a>
+                               
+
+                                <div class="col-lg-5">
+
+                                    <a href="{% url 'pricelist_editpage' pl.id %}" class=" fa fa-pencil btn btn-outline-info text-grey mt-2 mb-3" role="button"> Edit</a>
                                     {% if pl.is_active %}
-                                    <a href="{% url 'inactive_pricelist' pl.id %}" class="btn btn-success mt-2 mb-3">
-                                        <i class="fa fa-check" aria-hidden="true"></i> Active
-                                    </a>
+                                    <a href="{% url 'inactive_pricelist' pl.id %}" class=" fa fa fa-times btn btn-outline-info text-grey mt-2 mb-3" role="button"> Inactive</a>
                                     {% else %}
-                                    <a href="{% url 'active_pricelist' pl.id %}" class="btn btn-danger mt-2 mb-3">
-                                        <i class="fa fa-times" aria-hidden="true"></i> Inactive
-                                    </a>
+                                    <a href="{% url 'active_pricelist' pl.id %}" class=" fa fa-check btn btn-outline-info text-grey mt-2 mb-3" role="button"> Active</a>
                                     {% endif %}
-                                    <a href="{% url 'delete_pricelist' pl.id %}" class="btn btn-danger mt-2 mb-3">
-                                        <i class="fa fa-trash-o" aria-hidden="true"></i> Delete
-                                    </a>
+                                    <a href="{% url 'delete_pricelist' pl.id %}" class="fa fa-trash-o btn btn-outline-info text-grey mt-2 mb-3" role="button"> Delete</a>
+                                    <a href="{% url 'pricelist' %}" class="fa fa-arrow-left btn btn-outline-info text-grey mt-2 mb-3" role="button"> Close</a>
+                                   
+                                   
+                                     
                                 </div>
+
                             </div>
                             <hr>
+                              
                             <div class="row mb-3">
-                                <div class="col-sm-2 font-weight-bold">Name:</div>
+                                <label class="col-sm-2" style="font-size: large;">Name</label>
+                                <p ><b>:</b></p>
                                 <div class="col-sm-5">
-                                    <p>{{ pl.name }}</p>
+                                  <p style="font-size: large;"><b>{{pl.name}}</b></p>
                                 </div>
                             </div>
                             <div class="row mb-3">
-                                <div class="col-sm-2 font-weight-bold">Type:</div>
+                                <label class="col-sm-2" style="font-size: large;">Type</label>
+                                <p ><b>:</b></p>
                                 <div class="col-sm-5">
-                                    <p>{{ pl.types }}</p>
+                                  <p style="font-size: large;"><b>{{pl.types}}</b></p>
                                 </div>
                             </div>
                             <div class="row mb-3">
-                                <div class="col-sm-2 font-weight-bold">Item Rate:</div>
+                                <label class="col-sm-2" style="font-size: large;">Item Rate</label>
+                                <p ><b>:</b></p>
                                 <div class="col-sm-5">
-                                    <p>
-                                        {% if pl.item_rate == "Customized individual rate" %}
-                                            Customized individual rate
-                                        {% elif pl.upordown == "Markup" %}
-                                            Markup the item rates by a percentage
-                                        {% elif pl.upordown == "Markdown" %}
-                                            Markdown the item rates by a percentage
-                                        {% else %}
-                                            {{ pl.item_rate }}
-                                        {% endif %}
-                                    </p>
+                                  <p style="font-size: large;"><b>{{pl.item_rate}}</b></p>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label class="col-sm-2" style="font-size: large;">Description</label>
+                                <p ><b>:</b></p>
+                                <div class="col-sm-5">
+                                  <p style="font-size: large;"><b>{{pl.description}}</b></p>
+                                </div>
+                            </div>
+                            
+                            
+                            {% if items %}
+                            <hr>
+                            <div class="row mb-3">
+                                <label class="col-sm-12 mb-5 text-center" style="font-size: large;"><b>Customized item rates</b></label>
+                                <div class="col-sm-2"></div>
+                                <div class="table-responsive col-sm-8">
+                                    <table class="table  table-striped" style="background-color: #2f516f;color: white;font-size: large;">
+                                        <thead>
+                                            <tr>
+                                                <th>Item Details</th>
+                                                <th>Standard Rate(INR)</th>
+                                                <th>Custom Rate(INR)</th>
+                                            </tr>
+                                        </thead>
+                                        {% for i in items %}
+                                        <tbody>
+                                            <tr>
+                                                <td>{{i.itemname}}</td>
+                                                <td>{{i.itemrate}}</td>
+                                                <td><b>{{i.customrate}}</b></td>
+
+                                            </tr>
+                                        </tbody>
+                                        {% endfor %}
+                                    </table>
+
+                                </div>
+                                <div class="col-sm-2"></div>
+                            </div>
+                            {% else %}
+                            <div class="row mb-3">
+                                <label class="col-sm-2" style="font-size: large;">Percentage</label>
+                                <p ><b>:</b></p>
+                                <div class="col-sm-5">
+                                  <p style="font-size: large;"><b>{{pl.percentage}}%  {{pl.upordown}}</b></p>
+                                </div>
+                            </div>
+                        
+                            <div class="row mb-3">
+                                <label class="col-sm-2" style="font-size: large;">Round off to</label>
+                                <p ><b>:</b></p>
+                                <div class="col-sm-5">
+                                  <p style="font-size: large;"><b>{{pl.roundoffto}}</b></p>
                                 </div>
                             </div>
                             
                             <div class="row mb-3">
-                                <div class="col-sm-2 font-weight-bold">Description:</div>
+                                <label class="col-sm-2" style="font-size: large;">Currency</label>
+                                <p ><b>:</b></p>
                                 <div class="col-sm-5">
-                                    <p>{{ pl.description }}</p>
-                                </div>
-                            </div>
-                            {% if items %}
-                            <hr>
-                            <div class="row mb-3">
-                                <div class="col-sm-12 text-center font-weight-bold">Customized Item Rates</div>
-                            </div>
-                            <div class="table-responsive">
-                                <table class="table table-striped table-bordered">
-                                    <thead>
-                                        <tr>
-                                            <th>Item Details</th>
-                                            <th>Standard Rate(INR)</th>
-                                            <th>Custom Rate(INR)</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for i in items %}
-                                        <tr>
-                                            <td>{{ i.itemname }}</td>
-                                            <td>{{ i.itemrate }}</td>
-                                            <td><b>{{ i.customrate }}</b></td>
-                                        </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
-                            {% else %}
-                            <div class="row mb-3">
-                                <div class="col-sm-2 font-weight-bold">Percentage:</div>
-                                <div class="col-sm-5">
-                                    <p><b>{{ pl.percentage }}%  {{ pl.upordown }}</b></p>
-                                </div>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col-sm-2 font-weight-bold">Round off to:</div>
-                                <div class="col-sm-5">
-                                    <p><b>{{ pl.roundoffto }}</b></p>
-                                </div>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col-sm-2 font-weight-bold">Currency:</div>
-                                <div class="col-sm-5">
-                                    <p><b>{{ pl.currency }}</b></p>
+                                  <p style="font-size: large;"><b>{{pl.currency}}</b></p>
                                 </div>
                             </div>
                             {% endif %}
+                            
+
+                            
+                                
+
+                            
+                                
+                            
+                                
+                        
+                                
+        
+                                                           
+                            
+                            
                         </form>
                     </div>
                 </div>
-
-                <!-- Additional Box with Highlighted Values -->
-                <div class="card mt-4 radius-15" style="background-color: #2f516f; color: white;">
-                    <div class="card-body">
-                        <h5 class="card-title">Highlighted Values</h5>
-                        <div class="row mb-3">
-                            <div class="col-sm-2 font-weight-bold">Highlighted Field 1:</div>
-                            <div class="col-sm-5">
-                                <p style="background-color: hwb(60 15% 82%);"><b>Highlighted Value 1</b></p>
-                            </div>
-                        </div>
-                        <div class="row mb-3">
-                            <div class="col-sm-2 font-weight-bold">Highlighted Field 2:</div>
-                            <div class="col-sm-5">
-                                <p style="background-color: rgb(36, 36, 34);"><b>Highlighted Value 2</b></p>
-                            </div>
-                        </div>
-                        <!-- Add more highlighted fields as needed -->
-                    </div>
-                </div>
+                
+                
             </div>
             <div class="col-lg-1"></div>
+
+           
         </div>
+       
     </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 {% endblock %}

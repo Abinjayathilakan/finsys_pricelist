@@ -166,7 +166,7 @@
                                                         
 
                                                         <td>
-                                                            <input name="account[]" list="account" class="form-control" id="pin">
+                                                            <input name="account[]" list="account" class="form-control">
                                                             <datalist id="account"  required>
                                                                 <option value="" selected disabled required>Select Account</option>
                                                                 {% for a in acc %}
@@ -181,7 +181,7 @@
                                                         <td>
                                                             <input name="jcontact[]" list="jcontact1" class="form-control" id="pin">
                                                             <datalist id="jcontact1"  >
-                                                                <option value="null"  >Select Contact</option>
+                                                               
                                                                 {% for a in cust %}
                                                                     <option   value="{{ a.firstname }} {{ a.lastname }}">{{ a.firstname }} {{ a.lastname }} </option>
                                                                 {% endfor %}
@@ -584,7 +584,6 @@
             });
 
             function reloadExpense() {
-
                 $.ajax({
                     url: "{% url 'man_Journal_acc_dropdown' %}",
                     type: "GET",
@@ -593,19 +592,20 @@
                     csrfmiddlewaretoken: '{{ csrf_token }}',
             
                     success: function(data) {
-                        var dropdown = $('#account');
+                        var datalist = $('#account');
+                        datalist.empty();
             
-                        dropdown.empty();
                         $.each(data, function(key, value) {
-                            dropdown.append($('<option></option>').attr('value', key).text(value));
+                            // Create an option for the datalist
+                            var option = $('<option></option>').attr('value', value);
+            
+                            datalist.append(option);
                         });
                     },
-            
                 });
-            
-                
-             
             }
+            
+            
         </script>
 
         <!-- <script>

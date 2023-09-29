@@ -42574,49 +42574,74 @@ from django.http import JsonResponse
 from django.http import JsonResponse
 
 @login_required(login_url='regcomp')
+# def createaccount3(request):
+#     if 'uid' in request.session:
+#         if request.session.has_key('uid'):
+#             uid = request.session['uid']
+#         else:
+#             return redirect('/')
+
+#         cmp1 = company.objects.get(id=request.session['uid'])
+
+#         if request.method == 'POST':
+#             acctype = request.POST['acctype']
+#             # print(acctype)
+#             name = request.POST['name']
+#             # print(name)
+#             des = request.POST['description']
+#             # print(des)
+#             balance = request.POST.get('balance', 0.0)
+#             # print(balance)
+#             asof = request.POST['asof']
+#             # print(asof)
+#             dbbalance = request.POST.get('dbbalance', 0.0)
+#             # print(dbbalance)
+
+#             account = accounts1(
+#                 acctype=acctype,
+#                 name=name,
+#                 description=des,
+#                 balance=balance,
+#                 asof=asof,
+#                 cid=cmp1,
+#                 dbbalance=dbbalance
+#             )
+#             account.save()
+
+#             # Return the newly created account as JSON
+#             response_data = {
+#                 # 'id': account.id,
+#                 'name': account.name,
+#             }
+#             return JsonResponse(response_data)
+
+#         return render(request, 'app1/add_mjournal.html', {'cmp1': cmp1})
+
+#     return redirect('/')
+
+@login_required(login_url='regcomp')
 def createaccount3(request):
     if 'uid' in request.session:
         if request.session.has_key('uid'):
             uid = request.session['uid']
         else:
             return redirect('/')
-
         cmp1 = company.objects.get(id=request.session['uid'])
-
-        if request.method == 'POST':
+        if request.method=='POST':
             acctype = request.POST['acctype']
-            print(acctype)
             name = request.POST['name']
-            print(name)
-            des = request.POST['description']
-            print(des)
-            balance = request.POST.get('balance', 0.0)
-            print(balance)
+            des = request.POST['description']                           
+            balance = request.POST.get('balance')
+            if balance == "":
+                balance=0.0
             asof = request.POST['asof']
-            print(asof)
-            dbbalance = request.POST.get('dbbalance', 0.0)
-            print(dbbalance)
-
-            account = accounts1(
-                acctype=acctype,
-                name=name,
-                description=des,
-                balance=balance,
-                asof=asof,
-                cid=cmp1,
-                dbbalance=dbbalance
-            )
+            dbbalance = request.POST['dbbalance']
+            if dbbalance == "":
+                dbbalance = 0.0
+            account = accounts1(acctype=acctype, name=name, description=des, balance=balance, asof=asof, cid=cmp1,dbbalance=dbbalance)
             account.save()
-
-            # Return the newly created account as JSON
-            response_data = {
-                'id': account.id,
-                'name': account.name,
-            }
-            return JsonResponse(response_data)
-
-        return render(request, 'app1/add_mjournal.html', {'cmp1': cmp1})
-
+            return redirect('add_mjournal')
+        return render(request,'app1/add_mjournal.html',{'cmp1':cmp1})
     return redirect('/')
 
 
@@ -42815,6 +42840,41 @@ def m_journal_pdf(request, id):
         return HttpResponse('We had some errors <pre>' + html + '</pre>')
     
     return response
+from django.http import HttpResponse
+from django.template.loader import get_template
+from xhtml2pdf import pisa
+
+def price_list_pdf(request, pk):
+    try:
+        cmp1 = company.objects.get(id=request.session['uid'])
+        pl = Pricelist.objects.get(id=pk, cid=cmp1)
+        items = pricelist_individual.objects.filter(pricelist1=pk)
+
+        template_path = 'app1/pdf_pricelist.html'
+        context = {
+            'pl': pl,
+            'cmp1': cmp1,
+            'items': items,
+        }
+        fname = pl.name
+
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename={fname}.pdf'
+        template = get_template(template_path)
+        html = template.render(context)
+
+        # Create a PDF
+        pisa_status = pisa.CreatePDF(html, dest=response)
+
+        if pisa_status.err:
+            error_message = 'PDF generation error. Check your CSS code.'
+            return HttpResponse(error_message)
+
+        return response
+    except Exception as e:
+        # Handle exceptions, log them, or return an appropriate response
+        return HttpResponse(f'An error occurred: {str(e)}')
+
 
 
 def m_journal_convert1(request,id):
@@ -42873,3 +42933,6 @@ def man_Journal_acc_dropdown(request):
             options[option.accounts1id] = option.name
 
         return JsonResponse(options)
+    
+
+
