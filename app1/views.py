@@ -31062,6 +31062,8 @@ def add_mjournal(request):
         return redirect('gomjoural')    
 
 
+from django.http import HttpResponseBadRequest
+
 @login_required(login_url='regcomp')
 def create_mjournal(request):
     if 'uid' in request.session:
@@ -31071,6 +31073,7 @@ def create_mjournal(request):
             return redirect('/')
         cmp1 = company.objects.get(id=request.session['uid'])
         if request.method == 'POST':
+            
             cmp1 = company.objects.get(id=request.session['uid'])
             mjdate = request.POST['dateto1']
             mjno = request.POST['jnum']
@@ -31085,24 +31088,21 @@ def create_mjournal(request):
             total = request.POST['total_amount']
             total1 = request.POST['total_amount1']
             differ = request.POST['differ']
+            
+            if 'draft' in request.POST:
+                status = "Draft"
+            elif 'save' in request.POST:
+                status = "Publish"
+            else:
+                return HttpResponseBadRequest("Invalid form submission")
                 
             mjrnl1 = mjournal(date=mjdate, mj_no=mjno, ref_no=mjrno, notes=notes,j_type=mjtype, currency=currency, attach=file, 
                             s_totaldeb=subtotal, s_totalcre=subtotal1, total_deb=total, total_cre=total1, difference=differ,
-                            cid=cmp1)
-            
-            # total_debit += float(debits) if debits else 0
-            # total_credit += float(credits) if credits else 0
-
-            # difference = total_debit - total_credit
-
-            # total_debit = total_debit
-            # total_credit = total_credit
-            # difference = difference
-
-
+                            cid=cmp1, status=status)
             if subtotal == subtotal1:
+                
                 mjrnl1.save()
-
+                
                 acc = request.POST.getlist('account[]')
                 desc = request.POST.getlist('jdesc[]')
                 cont = request.POST.getlist('jcontact[]')
@@ -31117,12 +31117,12 @@ def create_mjournal(request):
                     for ele in mapped:
                         mjrnlAdd,created = mjournal1.objects.get_or_create(account = ele[0],desc = ele[1],contact=ele[2],debit=ele[3],
                         credit=ele[4],mjrnl=mj,cid=cmp1)
-
             else:    
                 messages.info( request, 'Please ensure that the debit and credit are equal')
-            return redirect('add_mjournal')
+            return redirect('sort_journal')
         return render(request, 'app1/mjournal.html',{'cmp1':cmp1})                        
     return redirect('/')
+
          
 
 # @login_required(login_url='regcomp')
@@ -31154,10 +31154,14 @@ def mj_edit_page(request,id):
         return render(request,'app1/mj_edit.html',context)
     return redirect('gomjoural') 
 
+from django.shortcuts import get_object_or_404, redirect, render
+from .models import mjournal, mjournal1
+from django.contrib.auth.models import User
+from .models import company
+
 def update_mj(request, id):
     mjrnl = get_object_or_404(mjournal, id=id)
     cmp1 = get_object_or_404(company, id=request.session.get('uid'))
-    print(cmp1)
 
     if request.method == 'POST':
         date = request.POST.get('date')
@@ -31174,49 +31178,49 @@ def update_mj(request, id):
         mjrnl.currency = currency
         mjrnl.j_type = j_type
         mjrnl.user = request.user
-        u = User.objects.get(id = request.user.id)
 
         # Set the 'cid' field explicitly to the 'company' object
         mjrnl.cid = cmp1
 
-        mjrnl.save()
-        p_bill = mjournal.objects.get(id=mjrnl.id)
+        if 'draft' in request.POST:
+            status = "Draft"
+        elif 'save' in request.POST:
+            status = "Publish"
 
+        mjrnl.status = status  # Set the status field
+
+        mjrnl.save()
+
+        # Delete existing mjournal1 objects associated with this mjournal
+        obj_dele = mjournal1.objects.filter(mjrnl=mjrnl)
+        obj_dele.delete()
+
+        # Get the updated data from the form
         account = request.POST.getlist("account")
         desc = request.POST.getlist("desc")
         contact = request.POST.getlist("contact")
         debit = request.POST.getlist("debit")
         credit = request.POST.getlist("credit")
 
-        obj_dele = mjournal1.objects.filter(mjrnl=p_bill.id)
-        obj_dele.delete()
-        
-        if len(account) == len(desc) == len(contact) == len(debit) == len(credit) and account and desc and contact and debit and credit:
-                    mapped=zip(account,desc,contact,debit,credit)
-                    mapped=list(mapped)
-                    for ele in mapped:
-                        mjrnlAdd,created = mjournal1.objects.get_or_create(account = ele[0],desc = ele[1],contact=ele[2],debit=ele[3],
-                        credit=ele[4],mjrnl=p_bill,cid=cmp1)
-
-        # if len(account) == len(desc) == len(contact) == len(debit) == len(credit):
-        #     for i in range(len(account)):
-        #         created = mjournal1.objects.get(
-        #             account=account[i],
-        #             desc=desc[i],
-        #             contact=contact[i],
-        #             debit=debit[i],
-        #             credit=credit[i],
-                    
-        #             # user=u,
-        #             cid=cmp1,
-        #             mjrnl=p_bill
-        #         )
-
-        #         print('Done')
+        # Create or update mjournal1 objects based on the updated data
+        if len(account) == len(desc) == len(contact) == len(debit) == len(credit):
+            for i in range(len(account)):
+                mjrnl1, created = mjournal1.objects.get_or_create(
+                    mjrnl=mjrnl,
+                    cid=cmp1,
+                    account=account[i],
+                    defaults={
+                        'desc': desc[i],
+                        'contact': contact[i],
+                        'debit': debit[i],
+                        'credit': credit[i],
+                    }
+                )
 
         return redirect('gomjoural')
 
     return render(request, 'app1/mj_edit.html', {'mjrnl': mjrnl, 'cmp1': cmp1})
+
 
 
     # account = request.POST.getlist("account")
@@ -42571,92 +42575,9 @@ def deleteloan(request,eid):
 
 from django.http import JsonResponse
 
-from django.http import JsonResponse
-
-@login_required(login_url='regcomp')
-# def createaccount3(request):
-#     if 'uid' in request.session:
-#         if request.session.has_key('uid'):
-#             uid = request.session['uid']
-#         else:
-#             return redirect('/')
-
-#         cmp1 = company.objects.get(id=request.session['uid'])
-
-#         if request.method == 'POST':
-#             acctype = request.POST['acctype']
-#             # print(acctype)
-#             name = request.POST['name']
-#             # print(name)
-#             des = request.POST['description']
-#             # print(des)
-#             balance = request.POST.get('balance', 0.0)
-#             # print(balance)
-#             asof = request.POST['asof']
-#             # print(asof)
-#             dbbalance = request.POST.get('dbbalance', 0.0)
-#             # print(dbbalance)
-
-#             account = accounts1(
-#                 acctype=acctype,
-#                 name=name,
-#                 description=des,
-#                 balance=balance,
-#                 asof=asof,
-#                 cid=cmp1,
-#                 dbbalance=dbbalance
-#             )
-#             account.save()
-
-#             # Return the newly created account as JSON
-#             response_data = {
-#                 # 'id': account.id,
-#                 'name': account.name,
-#             }
-#             return JsonResponse(response_data)
-
-#         return render(request, 'app1/add_mjournal.html', {'cmp1': cmp1})
-
-#     return redirect('/')
-
-@login_required(login_url='regcomp')
-def createaccount3(request):
-    if 'uid' in request.session:
-        if request.session.has_key('uid'):
-            uid = request.session['uid']
-        else:
-            return redirect('/')
-        cmp1 = company.objects.get(id=request.session['uid'])
-        if request.method=='POST':
-            acctype = request.POST['acctype']
-            name = request.POST['name']
-            des = request.POST['description']                           
-            balance = request.POST.get('balance')
-            if balance == "":
-                balance=0.0
-            asof = request.POST['asof']
-            dbbalance = request.POST['dbbalance']
-            if dbbalance == "":
-                dbbalance = 0.0
-            account = accounts1(acctype=acctype, name=name, description=des, balance=balance, asof=asof, cid=cmp1,dbbalance=dbbalance)
-            account.save()
-            return redirect('add_mjournal')
-        return render(request,'app1/add_mjournal.html',{'cmp1':cmp1})
-    return redirect('/')
 
 
 
-    
-@login_required(login_url='login')
-def vendor_credit_dropdown(request):
-    user = User.objects.get(id=request.user.id)
-
-    options = {}
-    option_objects = accounts1.objects.filter(user = user)
-    for option in option_objects:
-        
-        options[option.id] = [option.name]
-    return JsonResponse(options)
 
 # def pricelistpage(request):
 #     cmp1 = company.objects.get(id=request.session["uid"])
@@ -42934,5 +42855,3 @@ def man_Journal_acc_dropdown(request):
 
         return JsonResponse(options)
     
-
-

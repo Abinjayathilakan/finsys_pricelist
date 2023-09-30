@@ -2,9 +2,7 @@
 {% block body %}
     {% if user.is_authenticated %}
         {% load static %}
-<!-- Include the Select2 CSS and JavaScript files -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
 
         
@@ -61,7 +59,7 @@
                                                 <input type="text" class="form-control"   id="jno" name="mj_no" value="{{ a.mj_no }}" required> </div>
                                             <div class="col-md-3">
                                                 <label class="col-form-label">Reference no  </label>
-                                                <input type="text" class="form-control"  id="ref_no" name="rjnum" value="{{ a.ref_no }}">
+                                                <input type="text" class="form-control"  id="ref_no" name="ref_no" value="{{ a.ref_no }}">
                                             </div>
                                         </div>
                                         <div class="row">
@@ -120,16 +118,25 @@
                                                     <tr>
                                                         <td>1</td>
 
-                                                        <!-- <td>
+                                                        <td>
                                                             <select name='account' id="account" class="form-control" required>
                                                                 <option value="{{ a.account }}" >{{ a.account }}</option>
                                                                 {% for a in acc %}
                                                                     <option value="{{ a.name }}">{{ a.name }}</option>
                                                                 {% endfor %}
                                                             </select>
-                                                        </td> -->
+                                                        </td>
 
                                                         <td>
+                                                            <select name='account[]' id="account" class="form-control" required>
+                                                                <option value="{{ a.account }}" >{{ a.account }}</option>
+                                                                {% for a in acc %}
+                                                                        <option   value="{{ a.name }}">{{ a.name }} </option>
+                                                                {% endfor %}
+                                                            </select>
+                                                        </td>
+
+                                                        <!-- <td>
                                                             <input name="account" list="account" class="form-control" id="pin" style="color: yellow;">
                                                             <datalist id="account"  required>
                                                                 <option value="{{ a.account }}" >{{ a.account }}</option>
@@ -137,11 +144,31 @@
                                                                         <option value="{{ a.name }}">{{ a.name }} </option>
                                                                 {% endfor %}
                                                             </datalist>
-                                                        </td>
+                                                        </td> -->
+
+                                                        <!-- <td>
+                                                            <input name="account" list="account" class="form-control" id="pin" required value="{{ a.account }}">
+                                                            <datalist id="account">
+                                                              {% for a in acc %}
+                                                                <option value="{{ a.name }}">{{ a.name }}</option>
+                                                              {% endfor %}
+                                                            </datalist>
+                                                          </td> -->
+
+                                                          <!-- <td>
+                                                            <input name="account[]" list="account" class="form-control">
+                                                            <datalist id="account"  required>
+                                                                <option value="" selected disabled required>Select Account</option>
+                                                                {% for a in acc %}
+                                                                        <option   value="{{ a.name }}">{{ a.name }} </option>
+                                                                {% endfor %}
+                                                            </datalist>
+                                                        </td> -->
                                                         
                                                         <td><input type="text" name='desc' id="jdesc1" value="{{ a.desc }}"
                                                                    placeholder='Enter Description' class="form-control" >
                                                         </td>
+
                                                         <td>
                                                             <select name='contact' id="jcontact1" class="form-control" >
                                                                 <option value="{{ a.contact }}"  >{{ a.contact }}</option>
@@ -156,6 +183,23 @@
                                                                 {% endfor %}
                                                             </select>
                                                         </td>
+                                                        
+
+                                                        <!-- <td>
+                                                            <input name="jcontact" list="jcontact1" class="form-control" id="pin" value="{{ a.contact }}">
+                                                            <datalist id="jcontact1"  >
+                                                               
+                                                                {% for a in cust %}
+                                                                    <option   value="{{ a.firstname }} {{ a.lastname }}">{{ a.firstname }} {{ a.lastname }} </option>
+                                                                {% endfor %}
+                                                                {% for a in vndr %}
+                                                                    <option   value="{{ a.firstname }} {{ a.lastname }}">{{ a.firstname }} {{ a.lastname }} </option>
+                                                                {% endfor %}
+                                                                {% for a in employee %}
+                                                                    <option   value="{{ a.firstname }} {{ a.lastname }}">{{ a.firstname }} {{ a.lastname }} </option>
+                                                                {% endfor %}
+                                                            </datalist>
+                                                        </td> -->
                                                         <td>
                                                             <input type="number" name='debit' id="jdebit1" value="{{ a.debit }}"
                                                                    class="form-control debit" value="0" step="0" min="0"/>
@@ -240,6 +284,16 @@
                                                 </table>
                                             </div>
                                     </div>
+                                    <div class="row mt-3">
+                                        <div class="col">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value="" id="invalidCheck" required
+                                                       style="background-color: #2f516f;">
+                                                <p>Agree to terms and conditions</p>
+                                                <div class="invalid-feedback">You must agree before submitting.</div>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div class="row mt-5 mb-5">
                                         <div class="col-md-4">
                                             <a href="{% url 'gomjoural' %}"class="btn btn-outline-info rounded-pill w-25 text-light">
@@ -248,13 +302,13 @@
                                         </div>
 
                                         <div class="" style="margin-bottom: 20rem;">
-                                            <button type="submit" name="sd" class="btn btn-outline-info rounded-pill w-10 text-light " 
-                                                value="Draft">Save as Draft</button>
-                                            <button type="submit" name="sd" class="btn btn-outline-info rounded-pill w-10 text-light" 
-                                                value="Published">Save</button>
-                                                <input class="btn btn-outline-info rounded-pill w-10 text-light" type="reset"
-                                                value="Cancel" >
+                                            <button type="submit" name="draft" class="btn btn-outline-info rounded-pill w-10 text-light " 
+                                                >Save as Draft</button>&nbsp;&nbsp;
+                                            <button type="submit" name="save" class="btn btn-outline-info rounded-pill w-10 text-light" 
+                                                >Save And Send</button>
+                                        
                                         </div>
+
 
                                         
                                         <div class="col-md-4"></div>
@@ -291,25 +345,11 @@
                                             <div class="row mt-2 mb-2">
                                                 <div class="col-md-6">
                                                     <label for="acctyp">Account Type</label>
-                                                    <select name="acctype" id="acctype" class="custom-select-md form-control w-100">
-                                                        <!-- <option >Account Receivable</option>
-                                                        <option>Current Assets</option>
-                                                        <option>Bank</option>
-                                                        <option>Fixed Assets</option>
-                                                        <option>Non-Current Assets</option>
-                                                        <option>Accounts Payable</option>
-                                                        <option>Credit Card</option>
-                                                        <option>Current Liabilities</option>
-                                                        <option>Non-Current Liabilities</option>
-                                                        <option>Equity</option>
-                                                        <option>Income</option>
-                                                        <option>Other Incomes</option>
-                                                        <option>Cost Of Goods Sold</option> -->
+                                                    <select name="acctype" id="select1" class="custom-select-md form-control w-100">
+    
                                                         <option>Expenses</option>
                                                         <option>Other Expenses</option>
-                                                        <!-- <option>Undepposited Funds</option>
-                                                        <option>Stock(New)</option>
-                                                        <option>Cash</option> -->
+    
                                                     </select>
                                                 </div>
                                                 <div class="col-md-6">
@@ -340,12 +380,12 @@
                                                     <div class="mt-2">
                                                         <div>
                                                             <label for="asof">As of</label>
-                                                            <input type="date" name="asof" id="asof" class="form-control" value="{{ tod }}">
+                                                            <input type="date" name="asof" id="date1" class="form-control" value="{{ tod }}">
                                                         </div>
                                                     </div>
                                                     <div class="mt-2">
                                                         <label>Description</label>
-                                                    <textarea class="form-control" name="description" id="description" placeholder="Max. 500 Characters"></textarea>
+                                                    <textarea class="form-control" id="description" name="description" placeholder="Max. 500 Characters"></textarea>
                                                     </div>
                                                 </div>
                                             </div>        
@@ -354,7 +394,7 @@
                                                     <div class="col-md-5"></div>
                                                     <div class="col-md-4"></div>
                                                     <div class="col-md-3">
-                                                        <button type="submit" id="accountSave" class="btn btn-outline-info">Save and
+                                                        <button type="submit" class="btn btn-outline-info" data-dismiss="modal" id="accountSave">Save and
                                                             close
                                                         </button>
                                                     </div>
@@ -366,6 +406,7 @@
                             </div>
                         </div>
                     </div>
+
 
 
 
@@ -501,7 +542,6 @@
             });
 
             function reloadExpense() {
-
                 $.ajax({
                     url: "{% url 'man_Journal_acc_dropdown' %}",
                     type: "GET",
@@ -510,55 +550,22 @@
                     csrfmiddlewaretoken: '{{ csrf_token }}',
             
                     success: function(data) {
-                        var dropdown = $('#account');
+                        var datalist = $('#account');
+                        datalist.empty();
             
-                        dropdown.empty();
                         $.each(data, function(key, value) {
-                            dropdown.append($('<option></option>').attr('value', key).text(value));
+                            // Create an option for the datalist
+                            var option = $('<option></option>').attr('value', value);
+            
+                            datalist.append(option);
                         });
                     },
-            
                 });
-            
-                
-             
             }
+            
+            
         </script>
 
-
-        <!-- <script>
-            // Initialize Select2 on your select element
-            $(document).ready(function () {
-                $('#account').select2({
-                    placeholder: 'Select Account',
-                    allowClear: true // Option to clear the selection
-                });
-            });
-        </script> -->
-        
-        
-
-        <!-- <script>
-            $('#form').submit(function() {
-                var match = $('#subtotal').text() == $('#sub_total').text();
-                // var id1 = $('#jdebit1').text();
-                // var id2 = $('jcredit2').text();
-                if (match) {
-                    alert('Please ensure that the debit and credit are equal');
-                    return false;
-                }
-                else
-                {
-                    return true;
-                }
-            });
-        </script> -->
-        <!-- <script type="text/javascript">
-    $(document).ready(function() {
-        // Initialize Chosen with search capabilities
-        $("#account").chosen({ search_contains: true });
-    });
-</script> -->
 
 
        

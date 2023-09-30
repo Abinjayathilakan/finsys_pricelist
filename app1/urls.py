@@ -1087,12 +1087,8 @@ urlpatterns = [
 
  # Abin - Price List , Manual Journal Corrections
  
-    re_path(r'^createaccount3$', views.createaccount3, name='createaccount3'),
+    
     path('add_comment_retinvoice3/<int:id>',views.add_comment_retinvoice3,name='add_comment_retinvoice3'),
-
-
-    # path('iordername2', views.iordername2, name='iordername2'),
-    # path('sort_pricelist_name', views.sort_pricelist_name, name='sort_pricelist_name'),
     path('pricelist', views.pricelist, name='pricelist'),
     path('sortemployeename2', views.sortemployeename2, name='sortemployeename2'),
     path('sort_by_types', views.sort_by_types, name='sort_by_types'),
@@ -1105,6 +1101,7 @@ urlpatterns = [
     path('manualJournal_account',views.manualJournal_account,name='manualJournal_account'),
     path('man_Journal_acc_dropdown',views.man_Journal_acc_dropdown,name = 'man_Journal_acc_dropdown'),
     path('price_list_pdf/<int:pk>', views.price_list_pdf, name='price_list_pdf'),
+    path('send_retainer_invoice',views.send_retainer_invoice,name='send_retainer_invoice'),
 
     
 ]
