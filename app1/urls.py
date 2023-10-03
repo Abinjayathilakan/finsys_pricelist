@@ -931,7 +931,7 @@ urlpatterns = [
     
     # urls for Price list
     
-    # path('price_list/',views.pricelist,name='pricelist'),
+    path('price_list/',views.pricelist,name='pricelist'),
     path('new_price_list/',views.new_price_list,name='new_price_list'),
     path('pricelist_editpage/<int:pk>',views.pricelist_editpage,name='pricelist_editpage'),
     path('editpl/<int:pk>',views.editpl,name='editpl'),
@@ -1089,7 +1089,6 @@ urlpatterns = [
  
     
     path('add_comment_retinvoice3/<int:id>',views.add_comment_retinvoice3,name='add_comment_retinvoice3'),
-    path('pricelist', views.pricelist, name='pricelist'),
     path('sortemployeename2', views.sortemployeename2, name='sortemployeename2'),
     path('sort_by_types', views.sort_by_types, name='sort_by_types'),
     path('sort_contactname', views.sort_contactname, name='sort_contactname'),

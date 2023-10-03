@@ -31158,10 +31158,10 @@ from django.shortcuts import get_object_or_404, redirect, render
 from .models import mjournal, mjournal1
 from django.contrib.auth.models import User
 from .models import company
-
 def update_mj(request, id):
     mjrnl = get_object_or_404(mjournal, id=id)
     cmp1 = get_object_or_404(company, id=request.session.get('uid'))
+    print(cmp1)
 
     if request.method == 'POST':
         date = request.POST.get('date')
@@ -31169,6 +31169,12 @@ def update_mj(request, id):
         ref_no = request.POST.get('ref_no')
         notes = request.POST.get('notes')
         currency = request.POST.get('currency')
+        file = request.FILES.get('file')
+        sub_total = request.POST['sub_total']
+        sub_total1 = request.POST['sub_total1']
+        # total_amount = request.POST['total_amount']
+        # total_amount1 = request.POST['total_amount1']
+        # differ = request.POST['differ'] 
         j_type = request.POST.get('jtype') == 'True'
 
         mjrnl.date = date
@@ -31177,11 +31183,24 @@ def update_mj(request, id):
         mjrnl.notes = notes
         mjrnl.currency = currency
         mjrnl.j_type = j_type
+        mjrnl.attach = file
+        mjrnl.s_totaldeb = sub_total
+        mjrnl.s_totalcre = sub_total1
+        # mjrnl.total_deb = total_amount
+        # mjrnl.total_cre = total_amount1
+        # mjrnl.difference = differ      
         mjrnl.user = request.user
+        u = User.objects.get(id = request.user.id)
+        
+        total_deb = 0
+        total_cre = 0
+
+        
+     
 
         # Set the 'cid' field explicitly to the 'company' object
         mjrnl.cid = cmp1
-
+        
         if 'draft' in request.POST:
             status = "Draft"
         elif 'save' in request.POST:
@@ -31189,33 +31208,54 @@ def update_mj(request, id):
 
         mjrnl.status = status  # Set the status field
 
+
         mjrnl.save()
+        p_bill = mjournal.objects.get(id=mjrnl.id)
 
-        # Delete existing mjournal1 objects associated with this mjournal
-        obj_dele = mjournal1.objects.filter(mjrnl=mjrnl)
-        obj_dele.delete()
-
-        # Get the updated data from the form
         account = request.POST.getlist("account")
         desc = request.POST.getlist("desc")
         contact = request.POST.getlist("contact")
         debit = request.POST.getlist("debit")
         credit = request.POST.getlist("credit")
 
-        # Create or update mjournal1 objects based on the updated data
-        if len(account) == len(desc) == len(contact) == len(debit) == len(credit):
-            for i in range(len(account)):
-                mjrnl1, created = mjournal1.objects.get_or_create(
-                    mjrnl=mjrnl,
+        obj_dele = mjournal1.objects.filter(mjrnl=p_bill.id)
+        obj_dele.delete()
+        
+        # Update existing mjournal1 objects based on the updated data
+        # Assuming you have already defined account, desc, contact, debit, and credit lists
+        if len(account) == len(desc) == len(contact) == len(debit) == len(credit) and account and desc and contact and debit and credit:
+            mapped = zip(account, desc, contact, debit, credit)
+            mapped = list(mapped)
+            
+            # Rest of your code that uses the 'mapped' variable
+            for ele in mapped:
+                mjrnl1, created = mjournal1.objects.update_or_create(
+                    mjrnl=p_bill,
                     cid=cmp1,
-                    account=account[i],
+                    account=ele[0],
                     defaults={
-                        'desc': desc[i],
-                        'contact': contact[i],
-                        'debit': debit[i],
-                        'credit': credit[i],
+                        'desc': ele[1],
+                        'contact': ele[2],
+                        'debit': ele[3],
+                        'credit': ele[4],
                     }
                 )
+                total_deb = sum(float(value) for value in debit if value) if debit else 0
+                total_cre = sum(float(value) for value in credit if value) if credit else 0
+
+
+            difference = total_deb - total_cre
+
+            # Update the mjrnl object with the calculated values
+            mjrnl.total_deb = total_deb
+            mjrnl.total_cre = total_cre
+            mjrnl.difference = difference
+
+            # Save the updated mjrnl object
+            mjrnl.save()
+
+
+
 
         return redirect('gomjoural')
 
@@ -39586,7 +39626,8 @@ def pricelist_viewpage(request,pk):
         return render(request,'app1/pricelist_viewpage.html',context) 
             
     except:
-        return redirect('pricelist')            
+        return redirect('pricelist') 
+           
         
 @login_required(login_url='regcomp')
 def create_pricelist(request):
@@ -42665,11 +42706,26 @@ def sort_contactname(request):
     return render(request, 'app1/mjournal.html', {'mj': mj, 'cmp1': cmp1})
 
 
+from django.db.models.functions import Cast
+from django.db.models import IntegerField
+
 @login_required(login_url='regcomp')
 def sort_journal(request):
     cmp1 = company.objects.get(id=request.session["uid"])
-    mj = mjournal.objects.filter(cid=cmp1).order_by('mj_no')
+    mj = mjournal.objects.filter(cid=cmp1).annotate(mj_no_int=Cast('mj_no', IntegerField())).order_by('mj_no_int')
     return render(request, 'app1/mjournal.html', {'mj': mj, 'cmp1': cmp1})
+
+
+
+
+
+
+
+# def sortloanamount(request):
+#     cmp1 = company.objects.get(id=request.session["uid"])
+#     employee=EmployeeLoan.objects.filter(company=request.session["uid"]).order_by('LoanAmount')
+   
+#     return render(request,'app1/employeeloanpage.html',{'employee':employee,'cmp1':cmp1}) 
 
 
 def billconvert2(request, id):
