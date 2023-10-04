@@ -44,7 +44,44 @@
                             </div>
                         </div>
                     </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <input type="text" id="search" placeholder="Search..." class="form-control" autocomplete="off" 
+                                style="margin-top: 8px; background-color: #2f516f;color: white;">
+        
+                            </div> 
+                            <div class="col-md-2" style="width: 40%; margin-top: 9px;">
+                                <div class="dropdown">
+                                    <button type="button" class="btn btn-outline-info dropdown-toggle text-grey"
+                                            data-toggle="dropdown"> Sort by
+                                    </button>
+                                    <div class="dropdown-menu " style="background-color: black;">
+                                        <a class="dropdown-item	" href="{% url 'pricelist' %}"
+                                        style="height: 40px; font-size: 15px; color: white; text-align: center;" > All
+                                        <!-- <icon class=" fas fa-arrow-down"></icon> -->
+                                   </a>
+                                    <a class="dropdown-item	" href="{% url 'sortemployeename2' %}"
+                                        style="height: 40px; font-size: 15px; color: white; text-align: center;" > Name
+                                        <!-- <icon class=" fas fa-arrow-down"></icon> -->
+                                   </a>
+                                     <!-- <a class="dropdown-item  " href="{% url 'est_num_desc' %}"
+                                        style="height: 40px; font-size: 15px; color: white; text-align: center;" >Estimate Number <icon class=" fas fa-arrow-up"></icon></a> -->
+    
+                                    <a class="dropdown-item " href="{% url 'sort_by_types' %}"
+                                        style="height: 40px; font-size: 15px; color: white; text-align: center; " >Type</a>
+                                    <!-- <a class="dropdown-item " href="{% url 'est_date_desc' %}"
+                                        style="height: 40px; font-size: 15px; color: white; text-align: center;" >Date <icon class=" fas fa-arrow-up"></icon></a> -->
+    
+                                    
+                                            
+                                    </div> 
+                                </div>
+                            </div>
+                            <div class="col-md-3"></div>
+                    
                     <div class="col">
+                        
                     
                       <div class="dropdown">
                         <button type="button" class="btn btn-outline-info dropdown-toggle text-grey"
@@ -76,59 +113,83 @@
                 </div>
             </div>
             <div class="table-responsive">
-                <table class="table table-responsive-md table-hover mt-4" id="tabletobe">
-                    <thead>
-                    <tr>
-                        <th>NAME</th>
-                        <th>DESCRIPTION</th>
-                        <th>TYPE</th>
-                        <th>ITEM RATE</th>
-                        <th>ROUNDING</th>
-                        <th>STATUS</th>
-                        <th>DETAILS</th>
-                        
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for i in pricelist %}
-                    <tr class='clickable-row' >
-                        <td><a href="{% url 'pricelist_viewpage' i.id %}">{{ i.name }}</a></td>
-                        <td>{{ i.description }}</td>
+                
+                    <table class="table table-responsive-md mt-4 table-hover" id="tabletobe">
+                        <thead>
+                            <tr>
+                                <th>NAME</th>
+                                <th>DESCRIPTION</th>
+                                <th>TYPE</th>
+                                <th>ITEM RATE</th>
+                                <th>ROUNDING</th>
+                                <th>STATUS</th>
+                                <th>DETAILS</th>
                        
-                        <td>{{i.types}}</td>
-                        <td>{{i.item_rate}}</td>
-
-                        {% if i.item_rate == "Customized individual rate" %}
-                        <td>- - - - -</td>
-                        {% else %}
-                        <td>{{i.roundoffto}}</td>
-                        {% endif %}
-                        
-                       
-
-
-                        {% if i.is_active %}
-                        <td>Active</td>
-                        {% else %}
-                        <td>Inactive</td>
-                        {% endif %}
-                        
-                        {% if i.item_rate == "Customized individual rate" %}
-                        <td>Per Item Rate</td>
-                        {% else %}
-                        <td>{{i.percentage}}%   {{i.upordown}}</td>
-                        {% endif %}
-                               
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for emp in employee %}
                                 
-                    </tr>
-                     
-                    {% endfor %}
-                  
-                  
-                   
-                  
-                    </tbody>
-                </table>
+                                    <tr  class="table-row " >
+                                        <td ><a class="idsr" style="list-style: none;"  href="{% url 'pricelist_viewpage'  emp.id  %}"> {{ emp.name }}</a></td>
+
+                                        <!-- <div  data-toggle="tooltip" data-placement="top" title="{{ a.notes }}">
+                                            <i class="fa fa-commenting" aria-hidden="true"></i>
+
+                                        </div> -->
+
+                                        <td>
+                                            <a class="idsr" style="list-style: none;" data-toggle="tooltip" data-placement="top" href="{% url 'pricelist_viewpage' emp.id %}" title="{{ emp.description }}">
+                                              <i class="fa fa-commenting" aria-hidden="true"></i>
+                                            </a>
+                                          </td>
+                                          
+                                        <th><a class="idsr" style="list-style: none;"  href="{% url 'pricelist_viewpage'  emp.id  %}"> {{ emp.types }}</a></th>
+                                        <th>
+                                            <a class="idsr" style="list-style: none;"  href="{% url 'pricelist_viewpage'  emp.id  %}">
+                                                {% if emp.item_rate == "Customized individual rate" %}
+                                                    Customized individual rate
+                                                {% elif emp.upordown == "Markup" %}
+                                                    Markup the item rates by a percentage
+                                                {% elif emp.upordown == "Markdown" %}
+                                                    Markdown the item rates by a percentage
+                                                
+                                                {% else %}
+                                                    {{ emp.item_rate }}
+                                                {% endif %}
+                                            </a>
+                                        </th>
+                                        <td>
+                                            {% if emp.item_rate == "Customized individual rate" %}
+                                                - - - - -
+                                            {% elif emp.upordown == "Markup" or emp.upordown == "Markdown" %}
+                                                {{ emp.roundoffto }}
+                                            {% else %}
+                                                {{ emp.item_rate }}
+                                            {% endif %}
+                                        </td>
+                                        
+                                        
+
+                                        {% if emp.is_active %}
+                                        <td>Active</td>
+                                        {% else %}
+                                        <td>Inactive</td>
+                                        {% endif %}
+                                        
+                                        {% if emp.item_rate == "Customized individual rate" %}
+                                        <td><a class="idsr" style="list-style: none;"  href="{% url 'pricelist_viewpage'  emp.id  %}"></a>Per Item Rate</a></td>
+                                        {% else %}
+                                        <td> <a class="idsr" style="list-style: none;"  href="{% url 'pricelist_viewpage'  emp.id  %}">{{emp.percentage}}%   {{emp.upordown}}</a></td>
+                                        {% endif %}
+                                        
+                                        
+                                        
+                                    </tr>
+                           
+                            {% endfor %}
+                        </tbody>
+                    </table>
             </div>
         </div>
     </div>

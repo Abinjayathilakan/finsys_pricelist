@@ -357,7 +357,7 @@ footer p {
             <div class="card-body">
                 <div class="card-title">
                     <center><h2 class="mb-0">MANUAL JOURNAL VIEW</h2> <h4></h4></center>
-                    <hr>
+                 
                     <!-- <center><h5 class="mb-0">Journal No : {{ sale.mj_no }}</h5> <h4></h4></center> -->
                     
                     <center><p class="mb-0">Journal created by {{ user.first_name }}</> <h4></h4></center>
@@ -439,7 +439,7 @@ footer p {
                 <div class="my-5 page" size="A4" >
                     <div class="p-5">
                         <div id="ember2512" class="tooltip-container ember-view ribbon text-ellipsis">
-                            <div class="ribbon-inner ribbon-open">{{sale.status}}</div>
+                            <div class="ribbon-inner ribbon-open" style="color:black;font-weight:bold">{{sale.status}}</div>
                         </div>
                         <!-- <section class="top-content bb d-flex justify-content-between">
                             <div class="logo">
@@ -493,10 +493,10 @@ footer p {
                             <table class="table table-hover">
                                 <thead>
                                     <tr>
-                                        <td>ACCOUNT</td>
-                                        <td>CONTACT</td>
-                                        <td>DEBITS</td>
-                                        <td>CREDITS</td>
+                                        <td style="color:black;font-weight:bold">ACCOUNT</td>
+                                        <td style="color:black;font-weight:bold">CONTACT</td>
+                                        <td style="color:black;font-weight:bold">DEBITS</td>
+                                        <td style="color:black;font-weight:bold">CREDITS</td>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -635,8 +635,7 @@ footer p {
                                 {% csrf_token %}
                                 <!-- Display existing comments if they exist -->
                                 {% if sale.comments %}
-                                <label class="text-center">Existing Comment:</label>
-                                <p>{{ sale.comments }}</p>
+                                
                                 <label for="">Change Comment If Needed..</label>
                                 <textarea style="width: 100%;" name="comment" placeholder="Edit the comment">{{ sale.comments }}</textarea>
                                 {% else %}

@@ -39700,23 +39700,39 @@ def inactive_pricelist(request,pk):
 def plactive(request):
     try:
         cmp1 = company.objects.get(id=request.session['uid'])
-        pricelist=Pricelist.objects.filter(cid=cmp1,is_active=True)
-        context = {'cmp1': cmp1, 'pricelist':pricelist}
+        employee=Pricelist.objects.filter(cid=cmp1,is_active=True)
+        context = {'cmp1': cmp1, 'employee':employee}
         return render(request,'app1/plactive.html',context)
             
     except:
         return redirect('pricelist')
+    
+
 
 @login_required(login_url='regcomp')
 def plinactive(request):
     try:
         cmp1 = company.objects.get(id=request.session['uid'])
-        pricelist=Pricelist.objects.filter(cid=cmp1,is_active=False)
-        context = {'cmp1': cmp1, 'pricelist':pricelist}
+        employee=Pricelist.objects.filter(cid=cmp1,is_active=False)
+        context = {'cmp1': cmp1, 'employee':employee}
         return render(request,'app1/plinactive.html',context)
             
     except:
-        return redirect('pricelist')        
+        return redirect('pricelist')  
+
+
+    
+# def activeloanpage(request):
+#     cmp1 = company.objects.get(id=request.session["uid"])
+#     employee=EmployeeLoan.objects.filter(company=request.session["uid"],status='active')
+#     print(employee)
+#     return render(request,'app1/employeeloanpage.html',{'employee':employee,'cmp1':cmp1})       
+
+# def inactiveloanpage(request):
+#     cmp1 = company.objects.get(id=request.session["uid"])
+#     employee=EmployeeLoan.objects.filter(company=request.session["uid"],status='inactive')
+#     print(employee)
+#     return render(request,'app1/employeeloanpage.html',{'employee':employee,'cmp1':cmp1})       
       
 
 @login_required(login_url='regcomp')
