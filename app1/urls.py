@@ -1101,6 +1101,9 @@ urlpatterns = [
     path('man_Journal_acc_dropdown',views.man_Journal_acc_dropdown,name = 'man_Journal_acc_dropdown'),
     path('price_list_pdf/<int:pk>', views.price_list_pdf, name='price_list_pdf'),
     path('send_retainer_invoice',views.send_retainer_invoice,name='send_retainer_invoice'),
+    
+    path('add_man_Journal_comment/<int:id>', views.add_man_Journal_comment, name='add_man_Journal_comment'),
+    path('delete_man_Journal_comment/<int:id>', views.delete_man_Journal_comment, name='delete_man_Journal_comment'),
 
     
 ]

@@ -39722,17 +39722,17 @@ def plinactive(request):
 
 
     
-# def activeloanpage(request):
+# def plactive(request):
 #     cmp1 = company.objects.get(id=request.session["uid"])
-#     employee=EmployeeLoan.objects.filter(company=request.session["uid"],status='active')
-#     print(employee)
-#     return render(request,'app1/employeeloanpage.html',{'employee':employee,'cmp1':cmp1})       
+#     employee=Pricelist.objects.filter(company=request.session["uid"],is_active=True)
+#     print(pricelist)
+#     return render(request,'app1/pricelist.html',{'employee':employee,'cmp1':cmp1})       
 
-# def inactiveloanpage(request):
+# def plinactive(request):
 #     cmp1 = company.objects.get(id=request.session["uid"])
-#     employee=EmployeeLoan.objects.filter(company=request.session["uid"],status='inactive')
-#     print(employee)
-#     return render(request,'app1/employeeloanpage.html',{'employee':employee,'cmp1':cmp1})       
+#     employee=Pricelist.objects.filter(company=request.session["uid"],is_active=False)
+#     print(pricelist)
+#     return render(request,'app1/pricelist.html',{'employee':employee,'cmp1':cmp1})       
       
 
 @login_required(login_url='regcomp')
@@ -42765,24 +42765,36 @@ def billconvert2(request, id):
 #         return redirect('ret_invoice_slip',id=ret_inv.id)
     
     
-@login_required(login_url='regcomp')
+# @login_required(login_url='regcomp')
+# def view_mj(request,id):
+#     cmp1 = company.objects.get(id=request.session['uid'])
+#     upd = mjournal.objects.get(id=id, cid=cmp1)
+#     saleitem = mjournal1.objects.filter(mjrnl=id)
 
-def view_mj(request,id):
+#     context ={
+#         'sale':upd,
+#         'cmp1':cmp1,
+#         'saleitem':saleitem,
+#         'project': upd,    
+#     }
+#     return render(request,'app1/view_mj.html',context)
+
+def view_mj(request, id):
     cmp1 = company.objects.get(id=request.session['uid'])
     upd = mjournal.objects.get(id=id, cid=cmp1)
-
     saleitem = mjournal1.objects.filter(mjrnl=id)
+    cmt = man_Journal_comment.objects.filter(proj=upd)  # Retrieve comments related to the project
 
-    context ={
-        'sale':upd,
-        'cmp1':cmp1,
-        'saleitem':saleitem,
-        
-
+    context = {
+        'sale': upd,
+        'cmp1': cmp1,
+        'saleitem': saleitem,
+        'project': upd,
+        'cmt': cmt,  # Include comments in the context
     }
 
+    return render(request, 'app1/view_mj.html', context)
 
-    return render(request,'app1/view_mj.html',context)
 
 
 # @login_required(login_url='regcomp')
@@ -42927,3 +42939,23 @@ def man_Journal_acc_dropdown(request):
 
         return JsonResponse(options)
     
+def add_man_Journal_comment(request,id):
+    p=mjournal.objects.get(id=id)
+    if request.method== 'POST':
+        comment=request.POST['comments']
+        c= man_Journal_comment(comment=comment,proj=p)
+        c.save()
+        print("=====================================dddddddddddd")
+    return redirect('view_mj',id)
+
+
+def delete_man_Journal_comment(request, id): 
+    try:
+        comment = man_Journal_comment.objects.get(id=id)
+        p = comment.proj
+        comment.delete()
+        return redirect('view_mj', p.id)
+    except man_Journal_comment.DoesNotExist:
+        # Handle the case where the comment does not exist
+        return redirect('view_mj', p.id)
+
