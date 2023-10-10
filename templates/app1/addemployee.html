@@ -220,6 +220,11 @@
                             style="background-color: #2f516f;color: white;"required> 
                     </div>
                     <div class="col-3 col-md-4">
+                        <label for="age">Age</label>
+                        <input type="text" class="form-control" id="age" name="age" 
+                            style="background-color: #2f516f;color: white;" required> 
+                    </div>
+                    <div class="col-3 col-md-4">
                         <label for="bloodgroup">Blood Group</label>
                         <select name="bloodgroup" id="bloodgroup" class="form-control">
                             <option value="O+ve">O+ve</option>
@@ -233,14 +238,23 @@
                             <option value="Others">Others</option>
                         </select>
                     </div>
+
+                </div>
                     
-                    <div class="col-3 col-md-4">
+                    <!-- <div class="col-3 col-md-4">
                         <label for="fathersmothersname">Father's/Mother's Name</label>
                         <input type="text" class="form-control" id="fathersmothersname" name="fathersmothersname"
                              style="background-color: #2f516f;color: white;" required>
-                    </div>
- </div>
+                    </div> -->
+
  <div class="row mt-3">
+
+    <div class="col-3 col-md-4">
+        <label for="fathersmothersname">Father's/Mother's Name</label>
+        <input type="text" class="form-control" id="fathersmothersname" name="fathersmothersname" 
+            style="background-color: #2f516f;color: white;" required>
+    </div>
+
     <div class="col-3 col-md-4">
         <label for="spousename">Spouse Name</label>
         <input type="text" class="form-control" id="spousename" name="spousename" 
@@ -817,4 +831,27 @@
         }
     }
 </script>
+
+<script>
+    // Get references to the date of birth and age input fields
+    var dateOfBirthInput = document.getElementById('dateofbirth');
+    var ageInput = document.getElementById('age');
+
+    // Add an event listener to the date of birth input to calculate age
+    dateOfBirthInput.addEventListener('change', function () {
+        var dob = new Date(this.value);
+        var today = new Date();
+        var age = today.getFullYear() - dob.getFullYear();
+
+        // Check if the birthday has occurred this year
+        if (today.getMonth() < dob.getMonth() ||
+            (today.getMonth() === dob.getMonth() && today.getDate() < dob.getDate())) {
+            age--;
+        }
+
+        // Update the age input field with the calculated age
+        ageInput.value = age;
+    });
+</script>
+
 {% endblock %}

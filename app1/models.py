@@ -1974,6 +1974,8 @@ class payrollemployee(models.Model):
     function = models.CharField(max_length=100,null=True)
     gender = models.CharField(max_length=100,null=True)
     dateofbirth = models.CharField(max_length=100,null=True)
+    age = models.CharField(max_length=100,null=True)
+    
     bloodgroup = models.CharField(max_length=100,null=True)
     fathersmothersname = models.CharField(max_length=100,null=True)
     spousename = models.CharField(max_length=100,null=True)

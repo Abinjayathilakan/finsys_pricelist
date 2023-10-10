@@ -39932,6 +39932,7 @@ def addpayrollemployee(request):
             function = request.POST['function']
             gender = request.POST['gender']
             dateofbirth = request.POST['dateofbirth']
+            age = request.POST['age']
             bloodgroup = request.POST['bloodgroup']
             fathersmothersname = request.POST['fathersmothersname']
             spousename = request.POST['spousename']
@@ -39978,7 +39979,7 @@ def addpayrollemployee(request):
                                          hours=hours,rate=rate,
                                          amount=amount,employeeno=employeeno,
                                          designation=designation,function=function,
-                                         gender=gender,dateofbirth=dateofbirth,
+                                         gender=gender,dateofbirth=dateofbirth,age=age,
                                          bloodgroup=bloodgroup,fathersmothersname=fathersmothersname,
                                          spousename=spousename,
                                          generalphone=generalphone,
