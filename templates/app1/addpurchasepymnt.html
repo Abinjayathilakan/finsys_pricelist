@@ -18,13 +18,26 @@
                         <div class="row mt-5">
                             <div class="col-md-4">
                                 <label class="col-form-label">Vendor</label>
-                                <select name="vendor" id="select" class="form-control">
+                                <select name="vendor" id="select" class="form-control" onchange="updateVendorFields()">
                                     <option value="NIL" disabled selected>Select Vendor</option>
                                     {% for c in vndr %}
                                         <option value="{{ c.firstname }} {{ c.lastname }}">{{ c.firstname }} {{ c.lastname }}</option>
                                     {% endfor %}
                                 </select>
                             </div>
+                            <div class="col-md-4">
+                                <label class="col-form-label">Email</label>
+                                <input type="text" name="vendor_email" id="vendor_email" class="form-control">
+                            </div>
+                            <div class="col-md-4 d-none">
+                                <label class="col-form-label">Gst Treatment</label>
+                                <input type="text" name="gst_treatment" id="gst_treatment" class="form-control">
+                            </div>
+                            <div class="col-md-4 d-none">
+                                <label class="col-form-label">Gst Number</label>
+                                <input type="text" name="gst_number" id="gst_number" class="form-control">
+                            </div>
+                             
                             <div class="col-md-4"></div>
                             <div class="col-md-4">
                                 <label class="col-form-label">Payment Date</label>
@@ -1046,7 +1059,79 @@
             var amtrcd = parseFloat(document.getElementById('amtrcvd').value)
             if (sumpaym > amtrcd) {
 
-            
+                var paymentlistunsorted = [payment, payment1, payment2, payment3, payment4, payment5, payment6, payment7, payment8, payment9]
+                var paymentlist = []
+                for (i in paymentlistunsorted) {
+                    if (isNaN(paymentlistunsorted[i]) == false) {
+                        paymentlist.push(paymentlistunsorted[i])
+                    }
+                }
+                var sumpaym = 0
+                for (i in paymentlist) {
+                    sumpaym += paymentlist[i]
+                }
+                var amtrcd = parseFloat(document.getElementById('amtrcvd').value)
+                if (sumpaym > amtrcd) {var paymentlistunsorted = [payment, payment1, payment2, payment3, payment4, payment5, payment6, payment7, payment8, payment9]
+                    var paymentlist = []
+                    for (i in paymentlistunsorted) {
+                        if (isNaN(paymentlistunsorted[i]) == false) {
+                            paymentlist.push(paymentlistunsorted[i])
+                        }
+                    }
+                    var sumpaym = 0
+                    for (i in paymentlist) {
+                        sumpaym += paymentlist[i]
+                    }
+                    var amtrcd = parseFloat(document.getElementById('amtrcvd').value)
+                    if (sumpaym > amtrcd) {var paymentlistunsorted = [payment, payment1, payment2, payment3, payment4, payment5, payment6, payment7, payment8, payment9]
+                        var paymentlist = []
+                        for (i in paymentlistunsorted) {
+                            if (isNaN(paymentlistunsorted[i]) == false) {
+                                paymentlist.push(paymentlistunsorted[i])
+                            }
+                        }
+                        var sumpaym = 0
+                        for (i in paymentlist) {
+                            sumpaym += paymentlist[i]
+                        }
+                        var amtrcd = parseFloat(document.getElementById('amtrcvd').value)
+                        if (sumpaym > amtrcd) {var paymentlistunsorted = [payment, payment1, payment2, payment3, payment4, payment5, payment6, payment7, payment8, payment9]
+                            var paymentlist = []
+                            for (i in paymentlistunsorted) {
+                                if (isNaN(paymentlistunsorted[i]) == false) {
+                                    paymentlist.push(paymentlistunsorted[i])
+                                }
+                            }
+                            var sumpaym = 0
+                            for (i in paymentlist) {
+                                sumpaym += paymentlist[i]
+                            }
+                            var amtrcd = parseFloat(document.getElementById('amtrcvd').value)
+                            if (sumpaym > amtrcd) {var paymentlistunsorted = [payment, payment1, payment2, payment3, payment4, payment5, payment6, payment7, payment8, payment9]
+                                var paymentlist = []
+                                for (i in paymentlistunsorted) {
+                                    if (isNaN(paymentlistunsorted[i]) == false) {
+                                        paymentlist.push(paymentlistunsorted[i])
+                                    }
+                                }
+                                var sumpaym = 0
+                                for (i in paymentlist) {
+                                    sumpaym += paymentlist[i]
+                                }
+                                var amtrcd = parseFloat(document.getElementById('amtrcvd').value)
+                                if (sumpaym > amtrcd) {var paymentlistunsorted = [payment, payment1, payment2, payment3, payment4, payment5, payment6, payment7, payment8, payment9]
+                                    var paymentlist = []
+                                    for (i in paymentlistunsorted) {
+                                        if (isNaN(paymentlistunsorted[i]) == false) {
+                                            paymentlist.push(paymentlistunsorted[i])
+                                        }
+                                    }
+                                    var sumpaym = 0
+                                    for (i in paymentlist) {
+                                        sumpaym += paymentlist[i]
+                                    }
+                                    var amtrcd = parseFloat(document.getElementById('amtrcvd').value)
+                                    if (sumpaym > amtrcd) {
                 document.getElementById('amtoapply').value = sumpaym;
                 document.getElementById('amre').innerHTML = sumpaym;
                 
@@ -1064,5 +1149,78 @@
 
         }
     </script>
-   
+    <script>
+        function updateVendorFields() {
+            var selectedVendor = document.getElementById("select").value;
+            // Assuming vndr is a JavaScript object containing vendor data
+            var vendors = JSON.parse('{{ vndr | safe }}');
+            
+            // Find the selected vendor in the data
+            var selectedData = vendors.find(function(vendor) {
+                return vendor.firstname + ' ' + vendor.lastname === selectedVendor;
+            });
+            
+            if (selectedData) {
+                document.getElementById("email").value = selectedData.email;
+                document.getElementById("gsttreatment").value = selectedData.gsttype;
+                document.getElementById("gstnumber").value = selectedData.gstin;
+            } else {
+                // Clear the fields if no vendor is selected
+                document.getElementById("email").value = "";
+                document.getElementById("gsttreatment").value = "";
+                document.getElementById("gstnumber").value = "";
+            }
+        }
+    </script>
+
+    <script>
+        $(document).ready(function() {
+            $('#select').change(function() {
+                var name = $("#select").val();
+                var na = name.split(' ');
+                $.ajax({
+                    url: "{% url 'get_vendor_credit_det' %}",
+                    data: { 
+                        fname : na[0],
+                        lname : na[1],
+                        id : na[2],
+                        csrfmiddlewaretoken: '{{ csrf_token }}' 
+                    },
+                    type : 'POST',
+                    success: function(data) {
+                        $("#email_row").removeClass('d-none');
+                        $("#email_row").addClass('d-flex');
+                        $("#gst_trt_row").removeClass('d-none');
+                        $("#gst_trt_row").addClass('d-flex');
+                        $("#address_row").removeClass('d-none');
+                        $("#address_row").addClass('d-flex');
+                        
+                        // Check if any input box is empty in the GSTIN row
+                        if (!data.gst_number || !data.vendor_email || !data.gst_treatment) {
+                            $("#gstin_row").removeClass('d-flex');
+                            $("#gstin_row").addClass('d-none');
+                        } else {
+                            $("#gstin_row").removeClass('d-none');
+                            $("#gstin_row").addClass('d-flex');
+                        }
+        
+                        // Check if any input box is empty in the Address row
+                        if (!data.baddress) {
+                            $("#address_row").removeClass('d-flex');
+                            $("#address_row").addClass('d-none');
+                        } else {
+                            $("#address_row").removeClass('d-none');
+                            $("#address_row").addClass('d-flex');
+                        }
+        
+                        $('#email_inp').val(" " + data.vendor_email);
+                        $('#gst_trt_inp').val(" " + data.gst_treatment);
+                        $('#gstin_inp').val(" " + data.gst_number);
+                        $('#address_inp').val(" " + data.baddress);
+                    }
+                });
+            });
+        });
+        
+    </script>
 {% endblock %}

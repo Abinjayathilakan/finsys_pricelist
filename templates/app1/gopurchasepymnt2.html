@@ -49,7 +49,6 @@
                             <thead>
                             <tr>
                                 <th>Payment</th>
-                                <th>Vendor</th>
                                 <th>Reference</th>
                                 <th>Payment Date</th>
                                 <th>Vendor</th>
@@ -61,7 +60,6 @@
                             {% for p in py %}
                                 <tr onclick="window.location='viewpurchasepymnt/{{ p.pymntid }}';">
                                     <td><strong>{{ p.pymntid }}</strong></td>
-                                    <td>{{ p.vendor }}</td>
                                     <td>{{ p.reference }}</td>
                                     <td>{{ p.paymentdate |date:'d-m-Y' }}</td>
                                     <td>{{ p.vendor }}</td>

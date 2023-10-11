@@ -1104,6 +1104,16 @@ urlpatterns = [
     
     path('add_man_Journal_comment/<int:id>', views.add_man_Journal_comment, name='add_man_Journal_comment'),
     path('delete_man_Journal_comment/<int:id>', views.delete_man_Journal_comment, name='delete_man_Journal_comment'),
+    
+    # Employee and Payment Made Updation
+    
+    path('sortemployeename3', views.sortemployeename3, name='sortemployeename3'),
+    path('sort_empolyee_salary', views.sort_empolyee_salary, name='sort_empolyee_salary'),
+    path('active_employeepage', views.active_employeepage, name='active_employeepage'),
+    path('inactive_employeepage', views.inactive_employeepage, name='inactive_employeepage'),
+    
+    path('sort_payment_name', views.sort_payment_name, name='sort_payment_name'),
+    path('get_vendor_credit_det', views.get_vendor_credit_det, name='get_vendor_credit_det'),
 
     
 ]

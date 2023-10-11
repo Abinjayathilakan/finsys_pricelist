@@ -40024,7 +40024,7 @@ def listpayrollemployee(request):
 def payrollemployeeprofile(request,employeeid): 
   cmp1 = company.objects.get(id=request.session["uid"])
   employee = payrollemployee.objects.get(cid_id=request.session["uid"],employeeid=employeeid)
-  comments = payrollcomments.objects.filter(cid_id=request.session["uid"],empid_id=employeeid)
+
   return render(request,'app1/payrollemployeeprofile.html',{'employee': employee,'cmp1': cmp1,'comments': comments})
 
 
@@ -42959,4 +42959,108 @@ def delete_man_Journal_comment(request, id):
     except man_Journal_comment.DoesNotExist:
         # Handle the case where the comment does not exist
         return redirect('view_mj', p.id)
+    
+    
+
+# Employee and Payment Made Updation
+
+def sortemployeename3(request):
+    cmp1 = company.objects.get(id=request.session["uid"])
+    employee=payrollemployee.objects.all().order_by('firstname', 'lastname')
+   
+    return render(request,'app1/listemployee.html',{'employee':employee,'cmp1':cmp1})
+
+
+def sort_empolyee_salary(request):
+    cmp1 = company.objects.get(id=request.session["uid"])
+    # Use 'amount' as the field name for sorting by salary
+    employee = payrollemployee.objects.all().order_by('amount')
+   
+    return render(request, 'app1/listemployee.html', {'employee': employee, 'cmp1': cmp1})
+
+def active_employeepage(request):
+    cmp1 = company.objects.get(id=request.session["uid"])
+    employee=payrollemployee.objects.filter(status='active')
+    print(employee)
+    return render(request,'app1/listemployee.html',{'employee':employee,'cmp1':cmp1})       
+
+def inactive_employeepage(request):
+    cmp1 = company.objects.get(id=request.session["uid"])
+    employee=payrollemployee.objects.filter(status='inactive')
+    print(employee)
+    return render(request,'app1/listemployee.html',{'employee':employee,'cmp1':cmp1})   
+
+
+@login_required(login_url='regcomp')
+def gocustomers1(request):
+    try:
+        cmp1 = company.objects.get(id=request.session["uid"])
+        custo = customer.objects.filter(cid=cmp1,status='Active').all()
+        context = {'customers': custo, 'cmp1': cmp1}
+        return render(request, 'app1/customers.html', context)
+    except:
+        return redirect('godash')
+
+
+
+@login_required(login_url='regcomp')
+def gocustomers2(request):
+    try:
+        cmp1 = company.objects.get(id=request.session["uid"])
+        custo = customer.objects.filter(cid=cmp1,status='Inactive').all()
+        context = {'customers': custo, 'cmp1': cmp1}
+        return render(request, 'app1/customers.html', context)
+    except:
+        return redirect('godash')
+    
+# from django.db.models import OuterRef, Subquery
+
+# @login_required(login_url='regcomp')
+# def sort_payment_name(request):
+#     cmp1 = company.objects.get(id=request.session["uid"])
+    
+#     subquery = mjournal1.objects.filter(mjrnl=OuterRef('id')).order_by('id').values('contact')[:1]
+    
+#     mj = mjournal.objects.filter(cid=cmp1).annotate(
+#         first_contact=Subquery(subquery)
+#     ).order_by('first_contact')
+    
+#     return render(request, 'app1/mjournal.html', {'mj': mj, 'cmp1': cmp1})
+
+
+
+from django.shortcuts import get_object_or_404
+from .models import purchasepayment  # Import your models
+
+def sort_payment_name(request):
+    try:
+        # Assuming request.session["uid"] contains the company's ID
+        company_id = request.session.get("uid")
+
+        # Retrieve the company object based on the ID
+        cmp1 = get_object_or_404(company, id=company_id)
+
+        # Filter purchasepayment objects by the company's ID (cid field)
+        employee = purchasepayment.objects.filter(cid=cmp1).order_by('vendor')
+
+        return render(request, 'app1/gopurchasepymnt.html', {'employee': employee, 'cmp1': cmp1})
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return HttpResponse(f"An error occurred: {e}")
+    
+@login_required(login_url='login')
+def get_vendor_credit_det(request):
+
+    company= company_details.objects.get(user = request.user)
+
+    # fname = request.POST.get('fname')
+    # lname = request.POST.get('lname')
+    id = request.POST.get('id')
+    vdr = vendor.objects.get(user=company.user_id, id=id)
+    vemail = vdr.vendor_email
+    gstnum = vdr.gst_number
+    gsttr = vdr.gst_treatment
+    
+
+    return JsonResponse({'vendor_email' :vemail, 'gst_number' : gstnum,'gst_treatment':gsttr},safe=False)
 
